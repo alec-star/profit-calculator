@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "TrueMargin - Free Dropshipping Profit Calculator",
-  description: "Calculate your true profit margin, breakeven ROAS, and units needed to profit. Free forever. Know your real numbers before you spend.",
+  title: "Breakeven ROAS Calculator - Free | TrueMargin",
+  description: "Free breakeven ROAS calculator for dropshipping. Know your true profit margin and exactly how many units you need to sell before spending on ads.",
 };
 
 export default function RootLayout({
