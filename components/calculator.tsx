@@ -249,7 +249,7 @@ export function ProfitCalculator() {
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <DollarSign className="h-6 w-6 text-primary" />
-            <span className="font-bold">ProfitSync</span>
+            <span className="font-bold">TrueMargin</span>
           </div>
         </div>
       </header>
@@ -455,7 +455,7 @@ export function ProfitCalculator() {
       </main>
 
       <footer className="border-t mt-16 py-8 text-center text-sm text-muted-foreground">
-        <p>Free dropshipping profit calculator by ProfitSync</p>
+        <p>Free forever. By TrueMargin.</p>
       </footer>
     </div>
   );
