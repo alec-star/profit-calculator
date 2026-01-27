@@ -259,9 +259,9 @@ export function ProfitCalculator() {
           <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-primary/10 mb-4">
             <Calculator className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-4xl font-bold mb-2">Breakeven ROAS Calculator</h1>
+          <h1 className="text-4xl font-bold mb-2">Breakeven ROAS & Profit Calculator</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Know your true margin and exactly how many sales you need before spending on ads. Free forever.
+            Know your true margin and exactly how many sales you need before spending on ads. No sign up.
           </p>
         </div>
 
