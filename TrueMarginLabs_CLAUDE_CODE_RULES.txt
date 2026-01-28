@@ -1,0 +1,328 @@
+TRUE MARGIN LABS — BRAND SYSTEM (FOR CLAUDE CODE)
+================================================
+
+READ THIS FIRST. THESE ARE YOUR RULES.
+
+---
+
+COLORS - NON-NEGOTIABLE
+=======================
+
+Primary Colors (ONLY these):
+- White: #ffffff (all backgrounds)
+- Black: #0a0a0a (all text)
+- Emerald Green: #00d084 (primary accent - use this for EVERYTHING that needs color)
+- Emerald Bright: #00ff9f (when you need maximum pop)
+- Emerald Dark: #00a86b (hover states only)
+
+DO NOT USE:
+- Orange, yellow, pink, blue, purple, or any other colors
+- Background tints (no mint green, no light yellow backgrounds)
+- Gray backgrounds (use white only)
+
+RULE: If you need a second color, use emerald. If you need a third color, you're doing it wrong.
+
+---
+
+TYPOGRAPHY - NON-NEGOTIABLE
+===========================
+
+Font Family: System fonts only
+- -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif
+
+Sizes & Weights:
+- Display/Hero (48px): Weight 800, letter-spacing -1.5px
+- Heading 2 (36px): Weight 800, letter-spacing -1px
+- Heading 3 (24px): Weight 800, letter-spacing -0.5px
+- Body (16px): Weight 400, line-height 1.8
+- Small (13px): Weight 700, letter-spacing 0.8px
+
+RULE: Never use thin, light, or 300 weight fonts. Headlines are always 800 (bold).
+
+---
+
+LAYOUT & SPACING - NON-NEGOTIABLE
+=================================
+
+Backgrounds:
+- All page backgrounds: white (#ffffff)
+- All card backgrounds: white (#ffffff)
+- No colored backgrounds, ever
+
+Spacing Base Unit: 8px
+- Use multiples: 8, 16, 24, 32, 40, 48, 56, 64, 80
+- Generous whitespace is a feature, not wasted space
+
+Cards:
+- White background
+- 1-2px border in light gray (#e5e7eb)
+- Rounded corners 8-12px
+- Emerald green accent (left border, top accent, or shadow highlight)
+
+---
+
+ICONS & GRAPHICS
+===============
+
+Use EMOJIS ONLY:
+- Trophy: 🏆
+- Fire: 🔥
+- Check: ✅
+- Confetti: 🎉
+- Heart: 💚
+- Money bag: 💰
+- Star: ⭐
+- Sparkle: ✨
+- Lightning: ⚡
+- Rocket: 🚀
+- Trending up: 📈
+- Target: 🎯
+- Crown: 👑
+
+DO NOT:
+- Create custom icons
+- Use icon libraries with custom graphics
+- Use rounded rectangles with glyphs inside
+
+RULE: If you can express it with an emoji, use the emoji.
+
+---
+
+COMPONENTS - EXACT SPECS
+=======================
+
+PRIMARY BUTTON:
+- Background: linear-gradient(135deg, #00d084 0%, #00ff9f 100%)
+- Text: White, weight 700, 15px
+- Padding: 14px 28px
+- Border radius: 8px
+- Box shadow: 0 12px 32px rgba(0, 208, 132, 0.35)
+- Hover: transform translateY(-3px), shadow 0 16px 40px rgba(0, 208, 132, 0.45)
+
+SECONDARY BUTTON:
+- Background: transparent
+- Border: 2px solid #00d084
+- Text: #00d084, weight 700, 15px
+- Padding: 14px 28px
+- Border radius: 8px
+- Hover: Fill background with #00d084, text becomes white
+
+METRIC DISPLAY:
+- Large number: 32px+, weight 800, color #00d084
+- Label: 14px, gray (#6b7280), below number
+- Center aligned
+- White background, minimal border
+
+CARD:
+- White background
+- 1px border #e5e7eb
+- 8-12px border radius
+- Padding 24-32px
+- Hover: border becomes #00d084, subtle shadow
+
+FORM INPUTS:
+- White background
+- Light gray border (#e5e7eb)
+- Black text
+- 8px border radius
+- Focus state: Emerald green border (#00d084)
+
+---
+
+DO's - FOLLOW THESE
+==================
+
+✓ White backgrounds everywhere
+✓ Emerald green accents (and ONLY emerald green)
+✓ Use emojis for icons
+✓ Bold, confident typography (800 weight for headlines)
+✓ Generous whitespace
+✓ High contrast (black text on white, green on white)
+✓ System fonts only (no web fonts)
+✓ Design for social sharing (screenshot-worthy)
+✓ Let the green pop
+✓ Celebrate wins visually
+
+---
+
+DON'Ts - NEVER DO THESE
+=======================
+
+✕ Dark backgrounds
+✕ Colored card backgrounds (mint, yellow, pink, etc.)
+✕ Custom icons (use emojis)
+✕ Multiple accent colors
+✕ Thin or light typography (300-500 weight)
+✕ Gray text on light backgrounds
+✕ Cramped layouts (use spacing)
+✕ Decorative elements with no function
+✕ The green hidden or muted
+✕ Anything that doesn't look good on social media
+✕ HTML entities in visible text (no &apos;, &#39;, etc.)
+
+---
+
+PRIORITY HIERARCHY
+==================
+
+1. WHITE + EMERALD GREEN ONLY (this is the brand)
+2. Bold typography (weight 800 for headlines)
+3. Generous whitespace
+4. Emojis for visual interest
+5. Everything else is details
+
+If you're confused about a design decision, ask: "Does this use white background and emerald green?" If no, change it.
+
+---
+
+HOVER & INTERACTION STATES
+==========================
+
+Cards & Containers:
+- Border color: Change to #00d084 (emerald)
+- Box shadow: 0 16px 40px rgba(0, 208, 132, 0.12)
+- Transform: translateY(-6px)
+- Transition: all 0.3s ease
+
+Primary Buttons:
+- Transform: translateY(-3px)
+- Box shadow: 0 16px 40px rgba(0, 208, 132, 0.45)
+- Transition: all 0.25s ease
+
+Secondary Buttons:
+- Background: #00d084
+- Color: white
+- Transition: all 0.25s ease
+
+Leaderboard Rows:
+- Left border: 3px solid #00d084
+- Background: rgba(0, 208, 132, 0.04)
+- Transition: all 0.2s ease
+
+All transitions use "ease" timing, never "linear".
+
+---
+
+CALCULATOR SPECIFIC RULES
+=========================
+
+Page Title: "Calculate your Break Even ROAS in seconds"
+- Display/Hero size (48px), weight 800, black text
+
+Page Background: White (#ffffff)
+
+Form Section:
+- Input fields: White background, light gray border (#e5e7eb)
+- Labels: 14px, black, weight 700
+- Inputs: 16px body text, black
+- Focus state: Emerald border (#00d084)
+
+Results Display:
+- All metric numbers: 32px+, weight 800, emerald green (#00d084)
+- Metric labels: 14px, gray (#6b7280)
+- Cards: White background, subtle border
+
+Buttons:
+- "Join Waitlist": Primary button (emerald gradient)
+- "Reset": Secondary button or minimal text button
+
+Footer:
+- "Free forever. By TrueMargin Labs" - TrueMargin in emerald (#00d084)
+- "Arriving March 2026" - visible and clear, black text
+- All text displays as actual characters (no HTML entities)
+
+No HTML entities allowed:
+- Use ' not &apos;
+- Use " not &quot;
+- Use & not &amp;
+
+---
+
+TESTING & QA WORKFLOW
+=====================
+
+Before Claude Code ships any feature:
+
+1. LINT CHECK
+   - Run linter (ESLint/Stylelint)
+   - Fix all warnings and errors
+   - Check for unused code
+
+2. FUNCTIONALITY TEST
+   - All hover states work (cards, buttons, rows)
+   - All clicks/interactions respond
+   - Mobile responsive (test at 375px, 768px, 1440px)
+   - Colors match hex codes (#00d084 emerald, #ffffff white, #0a0a0a black)
+   - Text contrast is readable (WCAG AA minimum)
+   - Form inputs work correctly
+   - Email validation works
+
+3. BRAND COMPLIANCE CHECK
+   - [ ] White backgrounds only (no colored backgrounds)
+   - [ ] Emerald green only (no orange, yellow, red, blue)
+   - [ ] System fonts only (no web fonts)
+   - [ ] Emojis instead of custom icons
+   - [ ] Bold headlines (weight 800)
+   - [ ] Generous spacing
+
+4. REPORT BACK
+   - List any linting errors found
+   - Point out any bugs or broken interactions
+   - Confirm all brand checks passed
+
+If anything fails, fix it before moving to render check.
+
+---
+
+RENDER CHECK (CRITICAL)
+======================
+
+Before shipping ANY page, STOP and verify these:
+
+1. VISUAL INSPECTION
+   - [ ] Page loads without errors
+   - [ ] No overlapping text or elements
+   - [ ] All text is readable and properly aligned
+   - [ ] Images/logos display correctly (not cut off)
+   - [ ] Spacing is even and intentional
+   - [ ] Nothing breaks on screen resize
+   - [ ] No HTML entities visible (&apos;, &#39;, &quot;, etc.)
+
+2. RESPONSIVE TEST
+   - [ ] Desktop (1440px): Everything visible and readable
+   - [ ] Tablet (768px): Stacks properly, no overflow
+   - [ ] Mobile (375px): Single column, touch-friendly
+
+3. BRAND VISUAL CHECK
+   - [ ] White background dominant
+   - [ ] Emerald green pops
+   - [ ] Typography hierarchy is clear
+   - [ ] All text displays correctly (no HTML entities)
+
+If ANY of these fail, STOP and fix it before shipping.
+
+---
+
+BEFORE YOU FINISH ANY DESIGN
+=============================
+
+Final Checklist:
+- [ ] All backgrounds white?
+- [ ] All accent colors emerald green?
+- [ ] No orange, pink, yellow, or other colors?
+- [ ] Emojis used instead of custom icons?
+- [ ] Headlines weight 800?
+- [ ] Generous spacing (multiples of 8px)?
+- [ ] High contrast (black on white)?
+- [ ] Would someone screenshot this on Twitter?
+- [ ] Green is the star?
+- [ ] No HTML entities in visible text?
+- [ ] Render check passed?
+
+If you answer NO to any of these, fix it before shipping.
+
+---
+
+THIS IS YOUR SOURCE OF TRUTH.
+Use this over any screenshots, previous designs, or vague instructions.
+When in doubt, refer back to this document.

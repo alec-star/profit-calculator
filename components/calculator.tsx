@@ -35,8 +35,10 @@ interface CalcInputs {
   otherCostsPercent: number;
   fixedFeesPerUnit: number;
   monthlyOverhead: number;
-  unitsSold: number;
 }
+
+// Email validation regex
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type ShopifyPlan = "basic" | "shopify" | "advanced" | "custom";
 
@@ -102,9 +104,33 @@ export function ProfitCalculator() {
     otherCostsPercent: 0,
     fixedFeesPerUnit: 0,
     monthlyOverhead: 0,
-    unitsSold: 0,
   });
   const [shopifyPlan, setShopifyPlan] = useState<ShopifyPlan>("basic");
+  const [email, setEmail] = useState("");
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [waitlistStatus, setWaitlistStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const isValidEmail = EMAIL_REGEX.test(email);
+
+  const handleWaitlist = async () => {
+    if (!isValidEmail) return;
+    setWaitlistStatus("loading");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setWaitlistStatus("success");
+        setEmail("");
+      } else {
+        setWaitlistStatus("error");
+      }
+    } catch {
+      setWaitlistStatus("error");
+    }
+  };
 
   const updateInput = useCallback((key: keyof CalcInputs, value: number) => {
     setInputs((prev) => ({ ...prev, [key]: value }));
@@ -123,9 +149,7 @@ export function ProfitCalculator() {
 
   // Calculate margin scenarios based on user's selling price
   const marginScenarios = useMemo(() => {
-    const { sellingPrice, feesPercent, feesCents, taxPercent, adSpend } = inputs;
-    const processingFees = (sellingPrice * feesPercent / 100) + (feesCents / 100);
-    const taxCost = sellingPrice * (taxPercent / 100);
+    const { sellingPrice, adSpend } = inputs;
 
     return TARGET_MARGINS.map((margin) => {
       // Calculate profit at this margin target
@@ -175,7 +199,7 @@ export function ProfitCalculator() {
 
 
         <div className="grid lg:grid-cols-[400px_1fr] gap-6">
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Your Numbers</CardTitle>
@@ -212,19 +236,45 @@ export function ProfitCalculator() {
               </CardContent>
             </Card>
 
-            <Card className="border-[#00d084]/30">
-              <CardContent className="p-6 text-center">
-                <h3 className="font-extrabold text-lg mb-1">True Margin APEX</h3>
-                <p className="text-sm text-muted-foreground mb-4">Arriving March 2026</p>
+            <Card className="border-[#00d084]/30 flex-1">
+              <CardContent className="p-6 text-center flex flex-col justify-center h-full">
+                <img src="/apex-coming-soon.png" alt="True Margin APEX - Arriving March 2026" className="h-[61px] mx-auto mb-6" />
                 <div className="space-y-3">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="text-center"
-                  />
-                  <button className="w-full bg-[#00d084] hover:bg-[#00a86b] text-white font-semibold py-2 px-4 rounded-md transition-colors">
-                    Join Waitlist
-                  </button>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onFocus={() => setEmailFocused(true)}
+                      onBlur={() => setEmailFocused(false)}
+                      className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-center ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    />
+                    {!emailFocused && !email && (
+                      <span className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground pointer-events-none">
+                        Enter your email
+                      </span>
+                    )}
+                  </div>
+                  {waitlistStatus === "success" ? (
+                    <p className="text-[#00d084] font-bold py-2">You're on the list! 🎉</p>
+                  ) : (
+                    <>
+                      <button
+                        onClick={handleWaitlist}
+                        disabled={waitlistStatus === "loading" || !isValidEmail}
+                        style={{
+                          background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
+                          boxShadow: "0 12px 32px rgba(0, 208, 132, 0.35)",
+                        }}
+                        className="w-full text-white font-bold py-3 px-4 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_40px_rgba(0,208,132,0.45)]"
+                      >
+                        {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
+                      </button>
+                      {waitlistStatus === "error" && (
+                        <p className="text-red-500 text-sm mt-2">Something went wrong. Please try again.</p>
+                      )}
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -292,7 +342,7 @@ export function ProfitCalculator() {
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
                       <span className="text-base">✨</span>
-                      Net Profit Scenarios
+                      Net Margin Scenarios
                     </CardTitle>
                     <p className="text-xs text-muted-foreground">At your ${inputs.sellingPrice} selling price</p>
                   </CardHeader>
@@ -323,15 +373,14 @@ export function ProfitCalculator() {
                         </tbody>
                       </table>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-3">Higher margin = more profit per sale</p>
                   </CardContent>
                 </Card>
           </div>
         </div>
       </main>
 
-      <footer className="border-t mt-4 py-4 text-center text-sm text-muted-foreground">
-        <p>Free forever. By TrueMargin.</p>
+      <footer className="border-t mt-8 py-6 text-center">
+        <img src="/footer.png" alt="Free forever. By TrueMargin." className="h-6 mx-auto" />
       </footer>
     </div>
   );

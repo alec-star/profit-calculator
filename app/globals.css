@@ -65,3 +65,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide placeholder on focus */
+input[type="email"]:focus::placeholder {
+  color: transparent;
+}
+
+/* Brand button hover */
+.btn-waitlist {
+  background: linear-gradient(135deg, #00d084 0%, #00ff9f 100%);
+  box-shadow: 0 12px 32px rgba(0, 208, 132, 0.35);
+  transition: all 0.25s ease !important;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-waitlist:hover:not(:disabled) {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 16px 40px rgba(0, 208, 132, 0.45) !important;
+}
+
+.btn-waitlist:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
