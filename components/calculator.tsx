@@ -4,21 +4,26 @@ import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Target,
-  Sparkles,
-} from "lucide-react";
 
 const TARGET_MARGINS = [0, 0.10, 0.20, 0.30, 0.40, 0.50];
 
+// Tint system: very light backgrounds that hint at the metric's feeling
 const MARGIN_COLORS: Record<number, string> = {
-  0: "bg-red-50",
-  0.10: "bg-orange-50",
-  0.20: "bg-lime-50",
-  0.30: "bg-green-100",
-  0.40: "bg-green-200",
-  0.50: "bg-emerald-200",
+  0: "bg-red-50/80",        // Risk - breakeven
+  0.10: "bg-amber-50/80",   // Warning - low margin
+  0.20: "bg-emerald-50/80", // Good - decent margin
+  0.30: "bg-emerald-50/80", // Good - healthy margin
+  0.40: "bg-emerald-50/80", // Good - strong margin
+  0.50: "bg-emerald-50/80", // Good - excellent margin
 };
+
+// ROAS health indicator: green < 1.5x, yellow 1.5-2.0x, red > 2.0x
+function getRoasBackground(roas: number): string {
+  if (roas <= 0 || !isFinite(roas)) return "bg-gray-50/80 border-gray-100";
+  if (roas < 1.5) return "bg-emerald-50/80 border-emerald-100";
+  if (roas <= 2.0) return "bg-amber-50/80 border-amber-100";
+  return "bg-red-50/80 border-red-100";
+}
 
 interface CalcInputs {
   sellingPrice: number;
@@ -207,29 +212,44 @@ export function ProfitCalculator() {
               </CardContent>
             </Card>
 
+            <Card className="border-[#00d084]/30">
+              <CardContent className="p-6 text-center">
+                <h3 className="font-extrabold text-lg mb-1">True Margin APEX</h3>
+                <p className="text-sm text-muted-foreground mb-4">Arriving March 2026</p>
+                <div className="space-y-3">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="text-center"
+                  />
+                  <button className="w-full bg-[#00d084] hover:bg-[#00a86b] text-white font-semibold py-2 px-4 rounded-md transition-colors">
+                    Join Waitlist
+                  </button>
+                </div>
+              </CardContent>
+            </Card>
+
           </div>
 
           <div className="space-y-4">
-                <Card className="bg-gradient-to-br from-green-100 to-green-50 border-green-200">
+                <Card>
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <Target className="h-5 w-5 text-green-500" />
-                      </div>
+                      <span className="text-3xl">💰</span>
                       <div>
-                        <h3 className="font-semibold text-lg">Unit Economics</h3>
+                        <h3 className="font-extrabold text-lg">Unit Economics</h3>
                         <p className="text-sm text-muted-foreground">Your profit per sale</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-card rounded-lg border">
+                      <div className="p-4 bg-emerald-50/80 rounded-lg border border-emerald-100">
                         <p className="text-xs text-muted-foreground uppercase mb-1">Profit/Unit</p>
-                        <p className="text-2xl font-bold text-green-500">{results.hasSellingPrice ? `$${results.profitPerUnit.toFixed(2)}` : "—"}</p>
+                        <p className="text-2xl font-extrabold text-[#00d084]">{results.hasSellingPrice ? `$${results.profitPerUnit.toFixed(2)}` : "—"}</p>
                         {!results.hasSellingPrice && <p className="text-xs text-muted-foreground mt-1">Add selling price</p>}
                       </div>
-                      <div className="p-4 bg-card rounded-lg border">
+                      <div className="p-4 bg-emerald-50/80 rounded-lg border border-emerald-100">
                         <p className="text-xs text-muted-foreground uppercase mb-1">Net Margin</p>
-                        <p className="text-2xl font-bold text-green-500">{results.hasSellingPrice ? `${((results.profitPerUnit / inputs.sellingPrice) * 100).toFixed(0)}%` : "—"}</p>
+                        <p className="text-2xl font-extrabold text-[#00d084]">{results.hasSellingPrice ? `${((results.profitPerUnit / inputs.sellingPrice) * 100).toFixed(0)}%` : "—"}</p>
                         {!results.hasSellingPrice && <p className="text-xs text-muted-foreground mt-1">Add selling price</p>}
                       </div>
                     </div>
@@ -239,27 +259,27 @@ export function ProfitCalculator() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <Target className="h-4 w-4 text-green-500" />
+                      <span className="text-base">🎯</span>
                       Breakeven Point
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <div className={`p-4 rounded-lg border ${getRoasBackground(results.breakevenRoas)}`}>
                         <p className="text-xs text-muted-foreground uppercase mb-1">Breakeven ROAS</p>
-                        <p className="text-3xl font-bold text-amber-500">{results.hasSellingPrice && results.breakevenRoas > 0 ? `${results.breakevenRoas.toFixed(2)}x` : "—"}</p>
+                        <p className="text-3xl font-extrabold text-[#00d084]">{results.hasSellingPrice && results.breakevenRoas > 0 ? `${results.breakevenRoas.toFixed(2)}x` : "—"}</p>
                         <p className="text-xs text-muted-foreground mt-1">{results.hasSellingPrice ? "Minimum ROAS needed" : "Add selling price"}</p>
                       </div>
-                      <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                      <div className="p-4 bg-emerald-50/80 rounded-lg border border-emerald-100">
                         <p className="text-xs text-muted-foreground uppercase mb-1">Units to Profit</p>
                         {results.hasAdSpend ? (
                           <>
-                            <p className="text-3xl font-bold text-green-500">{results.breakevenUnits}</p>
+                            <p className="text-3xl font-extrabold text-[#00d084]">{results.breakevenUnits}</p>
                             <p className="text-xs text-muted-foreground mt-1">${(results.breakevenUnits * inputs.sellingPrice).toLocaleString()} revenue</p>
                           </>
                         ) : (
                           <>
-                            <p className="text-3xl font-bold text-muted-foreground">—</p>
+                            <p className="text-3xl font-extrabold text-muted-foreground">—</p>
                             <p className="text-xs text-muted-foreground mt-1">Add ad spend</p>
                           </>
                         )}
@@ -271,7 +291,7 @@ export function ProfitCalculator() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-green-500" />
+                      <span className="text-base">✨</span>
                       Net Profit Scenarios
                     </CardTitle>
                     <p className="text-xs text-muted-foreground">At your ${inputs.sellingPrice} selling price</p>
@@ -292,7 +312,11 @@ export function ProfitCalculator() {
                             <tr key={scenario.margin} className={`border-b border-muted/50 ${MARGIN_COLORS[scenario.margin] || ""}`}>
                               <td className="py-1.5 pl-3 font-medium">{scenario.margin === 0 ? "BE" : `${(scenario.margin * 100).toFixed(0)}%`}</td>
                               <td className="text-right py-1.5">${inputs.sellingPrice}</td>
-                              <td className="text-right py-1.5 text-amber-500">{isFinite(scenario.breakevenRoas) ? `${scenario.breakevenRoas.toFixed(2)}x` : "∞"}</td>
+                              <td className={`text-right py-1.5 text-[#00d084] font-medium`}>
+                              <span className={`px-1.5 py-0.5 rounded ${getRoasBackground(scenario.breakevenRoas)}`}>
+                                {isFinite(scenario.breakevenRoas) ? `${scenario.breakevenRoas.toFixed(2)}x` : "∞"}
+                              </span>
+                            </td>
                               <td className="text-right py-1.5 pr-3">{isFinite(scenario.breakevenOrders) ? scenario.breakevenOrders : "∞"}</td>
                             </tr>
                           ))}

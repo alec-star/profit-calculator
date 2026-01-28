@@ -43,6 +43,14 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        brand: {
+          green: "var(--brand-green)",
+          "green-bright": "var(--brand-green-bright)",
+          "green-dark": "var(--brand-green-dark)",
+          black: "var(--brand-black)",
+          gray: "var(--brand-gray)",
+          "gray-text": "var(--brand-gray-text)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
