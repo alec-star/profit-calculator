@@ -4,112 +4,49 @@ import { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import {
-  Calculator,
-  HelpCircle,
-  ChevronDown,
-  ChevronUp,
   Target,
-  DollarSign,
   Sparkles,
-  Zap,
-  Trophy,
-  Rocket,
-  Package,
-  Plus,
-  Trash2,
 } from "lucide-react";
+
+const TARGET_MARGINS = [0, 0.10, 0.20, 0.30, 0.40, 0.50];
+
+const MARGIN_COLORS: Record<number, string> = {
+  0: "bg-red-50",
+  0.10: "bg-orange-50",
+  0.20: "bg-lime-50",
+  0.30: "bg-green-100",
+  0.40: "bg-green-200",
+  0.50: "bg-emerald-200",
+};
 
 interface CalcInputs {
   sellingPrice: number;
   cogs: number;
+  taxPercent: number;
   adSpend: number;
   feesPercent: number;
+  feesCents: number;
   otherCostsPercent: number;
   fixedFeesPerUnit: number;
   monthlyOverhead: number;
   unitsSold: number;
 }
 
-interface BundleTier {
-  quantity: number;
-  price: number;
-  cogsPerUnit: number;
-}
+type ShopifyPlan = "basic" | "shopify" | "advanced" | "custom";
 
-interface BundleResults {
-  quantity: number;
-  price: number;
-  totalCogs: number;
-  profitPerOrder: number;
-  breakevenRoas: number;
-  breakevenOrders: number;
-}
+const SHOPIFY_FEES: Record<ShopifyPlan, { percent: number; cents: number; label: string }> = {
+  basic: { percent: 2.9, cents: 30, label: "Basic (2.9% + 30¢)" },
+  shopify: { percent: 2.6, cents: 30, label: "Shopify (2.6% + 30¢)" },
+  advanced: { percent: 2.4, cents: 30, label: "Advanced (2.4% + 30¢)" },
+  custom: { percent: 0, cents: 0, label: "Custom" },
+};
 
-interface Preset {
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  color: string;
-  values: Partial<CalcInputs>;
-}
 
-const PRESETS: Preset[] = [
-  {
-    name: "10% Profit",
-    description: "Conservative goal",
-    icon: <Target className="h-4 w-4" />,
-    color: "bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30 text-blue-600",
-    values: { sellingPrice: 39.99, cogs: 15, feesPercent: 3, otherCostsPercent: 5 },
-  },
-  {
-    name: "20% Typical",
-    description: "Standard dropship",
-    icon: <Zap className="h-4 w-4" />,
-    color: "bg-green-500/10 hover:bg-green-500/20 border-green-500/30 text-green-600",
-    values: { sellingPrice: 49.99, cogs: 18, feesPercent: 3, otherCostsPercent: 5 },
-  },
-  {
-    name: "30% Target",
-    description: "Optimized store",
-    icon: <Trophy className="h-4 w-4" />,
-    color: "bg-purple-500/10 hover:bg-purple-500/20 border-purple-500/30 text-purple-600",
-    values: { sellingPrice: 59.99, cogs: 15, feesPercent: 2.9, otherCostsPercent: 4 },
-  },
-  {
-    name: "40% High-Margin",
-    description: "Premium brand",
-    icon: <Rocket className="h-4 w-4" />,
-    color: "bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30 text-amber-600",
-    values: { sellingPrice: 89.99, cogs: 20, feesPercent: 2.5, otherCostsPercent: 3 },
-  },
-];
 
-function Tooltip({ content }: { content: string }) {
-  const [show, setShow] = useState(false);
-  return (
-    <div className="relative inline-block">
-      <button
-        type="button"
-        className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
-        onMouseEnter={() => setShow(true)}
-        onMouseLeave={() => setShow(false)}
-      >
-        <HelpCircle className="h-3 w-3" />
-      </button>
-      {show && (
-        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 text-xs bg-popover text-popover-foreground rounded-lg shadow-lg border max-w-[250px] whitespace-normal">
-          {content}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function CalcField({
   label,
-  tooltip,
   value,
   onChange,
   prefix,
@@ -117,7 +54,6 @@ function CalcField({
   placeholder,
 }: {
   label: string;
-  tooltip: string;
   value: number;
   onChange: (value: number) => void;
   prefix?: string;
@@ -126,10 +62,7 @@ function CalcField({
 }) {
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <Label className="text-sm font-medium">{label}</Label>
-        <Tooltip content={tooltip} />
-      </div>
+      <Label className="text-sm font-medium">{label}</Label>
       <div className="relative">
         {prefix && (
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
@@ -155,306 +88,226 @@ function CalcField({
 
 export function ProfitCalculator() {
   const [inputs, setInputs] = useState<CalcInputs>({
-    sellingPrice: 49.99,
-    cogs: 18,
-    adSpend: 50,
-    feesPercent: 3,
+    sellingPrice: 50,
+    cogs: 10,
+    taxPercent: 0,
+    adSpend: 0,
+    feesPercent: 2.9,
+    feesCents: 30,
     otherCostsPercent: 0,
     fixedFeesPerUnit: 0,
     monthlyOverhead: 0,
     unitsSold: 0,
   });
-
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [activePreset, setActivePreset] = useState<number | null>(1);
-  const [bundleMode, setBundleMode] = useState(false);
-  const [bundleTiers, setBundleTiers] = useState<BundleTier[]>([
-    { quantity: 1, price: 40, cogsPerUnit: 18 },
-    { quantity: 2, price: 70, cogsPerUnit: 18 },
-  ]);
+  const [shopifyPlan, setShopifyPlan] = useState<ShopifyPlan>("basic");
 
   const updateInput = useCallback((key: keyof CalcInputs, value: number) => {
     setInputs((prev) => ({ ...prev, [key]: value }));
-    setActivePreset(null);
-  }, []);
-
-  const applyPreset = useCallback((preset: Preset, index: number) => {
-    setInputs((prev) => ({ ...prev, ...preset.values }));
-    setActivePreset(index);
-  }, []);
-
-  const updateBundleTier = useCallback((index: number, field: keyof BundleTier, value: number) => {
-    setBundleTiers((prev) => {
-      const next = [...prev];
-      next[index] = { ...next[index], [field]: value };
-      return next;
-    });
-  }, []);
-
-  const addBundleTier = useCallback(() => {
-    if (bundleTiers.length < 4) {
-      const lastTier = bundleTiers[bundleTiers.length - 1];
-      setBundleTiers((prev) => [
-        ...prev,
-        { quantity: lastTier.quantity + 1, price: Math.round(lastTier.price * 1.4), cogsPerUnit: lastTier.cogsPerUnit },
-      ]);
+    if (key === "feesPercent" || key === "feesCents") {
+      setShopifyPlan("custom");
     }
-  }, [bundleTiers]);
+  }, []);
 
-  const removeBundleTier = useCallback((index: number) => {
-    if (bundleTiers.length > 1) {
-      setBundleTiers((prev) => prev.filter((_, i) => i !== index));
+  const handlePlanChange = useCallback((plan: ShopifyPlan) => {
+    setShopifyPlan(plan);
+    if (plan !== "custom") {
+      const fees = SHOPIFY_FEES[plan];
+      setInputs((prev) => ({ ...prev, feesPercent: fees.percent, feesCents: fees.cents }));
     }
-  }, [bundleTiers.length]);
+  }, []);
 
-  const bundleResults: BundleResults[] = useMemo(() => {
-    if (!bundleMode) return [];
-    const { adSpend, feesPercent, otherCostsPercent } = inputs;
-    return bundleTiers.map((tier) => {
-      const totalCogs = tier.cogsPerUnit * tier.quantity;
-      const fees = tier.price * (feesPercent / 100);
-      const otherCosts = tier.price * (otherCostsPercent / 100);
-      const profitPerOrder = tier.price - totalCogs - fees - otherCosts;
-      const breakevenRoas = profitPerOrder > 0 ? tier.price / profitPerOrder : 0;
-      const breakevenOrders = profitPerOrder > 0 ? Math.ceil(adSpend / profitPerOrder) : 0;
-      return { quantity: tier.quantity, price: tier.price, totalCogs, profitPerOrder, breakevenRoas, breakevenOrders };
+  // Calculate margin scenarios based on user's selling price
+  const marginScenarios = useMemo(() => {
+    const { sellingPrice, feesPercent, feesCents, adSpend } = inputs;
+    const processingFees = (sellingPrice * feesPercent / 100) + (feesCents / 100);
+
+    return TARGET_MARGINS.map((margin) => {
+      // Calculate what COGS would need to be for this margin
+      const targetProfit = sellingPrice * margin;
+      const maxCogs = sellingPrice - processingFees - targetProfit;
+      const breakevenRoas = targetProfit > 0.01 ? sellingPrice / targetProfit : Infinity;
+      const breakevenOrders = targetProfit > 0.01 ? Math.ceil(adSpend / targetProfit) : Infinity;
+      return {
+        margin,
+        price: sellingPrice,
+        maxCogs: Math.round(maxCogs * 100) / 100,
+        profit: Math.round(targetProfit * 100) / 100,
+        breakevenRoas: isFinite(breakevenRoas) ? Math.round(breakevenRoas * 100) / 100 : Infinity,
+        breakevenOrders: isFinite(breakevenOrders) ? breakevenOrders : Infinity,
+      };
     });
-  }, [bundleMode, bundleTiers, inputs]);
+  }, [inputs]);
 
   const results = useMemo(() => {
-    const { sellingPrice, cogs, adSpend, feesPercent, otherCostsPercent, fixedFeesPerUnit, monthlyOverhead } = inputs;
+    const { sellingPrice, cogs, taxPercent, adSpend, feesPercent, feesCents, otherCostsPercent, fixedFeesPerUnit, monthlyOverhead } = inputs;
 
-    if (sellingPrice <= 0 || cogs >= sellingPrice) {
-      return { isValid: false, breakevenRoas: 0, breakevenUnits: 0, profitPerUnit: 0 };
+    if (!sellingPrice || sellingPrice <= 0) {
+      return { hasSellingPrice: false, breakevenRoas: 0, breakevenUnits: 0, profitPerUnit: 0, hasAdSpend: false };
     }
 
     const grossMargin = sellingPrice - cogs - fixedFeesPerUnit;
-    const variableCosts = sellingPrice * ((feesPercent + otherCostsPercent) / 100);
-    const profitPerUnit = grossMargin - variableCosts;
-
-    if (profitPerUnit <= 0) {
-      return { isValid: false, breakevenRoas: 0, breakevenUnits: 0, profitPerUnit };
-    }
+    const processingFees = (sellingPrice * (feesPercent / 100)) + (feesCents / 100);
+    const taxCost = sellingPrice * (taxPercent / 100);
+    const otherCosts = sellingPrice * (otherCostsPercent / 100);
+    const profitPerUnit = grossMargin - processingFees - taxCost - otherCosts;
 
     const fixedCosts = adSpend + monthlyOverhead;
-    const breakevenUnits = fixedCosts > 0 ? Math.ceil(fixedCosts / profitPerUnit) : 0;
-    const breakevenRoas = adSpend > 0 && profitPerUnit > 0 ? sellingPrice / profitPerUnit : 0;
+    const breakevenUnits = profitPerUnit > 0 && fixedCosts > 0 ? Math.ceil(fixedCosts / profitPerUnit) : 0;
+    const breakevenRoas = profitPerUnit > 0 ? sellingPrice / profitPerUnit : 0;
 
-    return { isValid: true, breakevenRoas, breakevenUnits, profitPerUnit };
+    return { hasSellingPrice: true, breakevenRoas, breakevenUnits, profitPerUnit, hasAdSpend: adSpend > 0 };
   }, [inputs]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <header className="border-b bg-background/95 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <DollarSign className="h-6 w-6 text-primary" />
-            <span className="font-bold">TrueMargin</span>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-primary/10 mb-4">
-            <Calculator className="h-8 w-8 text-primary" />
-          </div>
-          <h1 className="text-4xl font-bold mb-2">Breakeven ROAS & Profit Calculator</h1>
+      <main className="mx-auto max-w-6xl px-4 pt-12 pb-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <img src="/logo-black.png" alt="TrueMargin Labs" className="h-20 mx-auto mb-2" />
+          <img src="/typeface-lightblack.png" alt="TrueMargin Labs" className="h-8 mx-auto mb-4" />
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Know your true margin and exactly how many sales you need before spending on ads. No sign up.
+            Calculate your true margin, breakeven ROAS, PROAS, and exactly how many sales you need before spending on ads.
           </p>
         </div>
 
-        <div className="mb-6">
-          <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center justify-center gap-2">
-            <Sparkles className="h-4 w-4" />
-            Quick Presets
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {PRESETS.map((preset, index) => (
-              <button
-                key={preset.name}
-                onClick={() => applyPreset(preset, index)}
-                className={`p-3 rounded-lg border-2 text-left transition-all ${preset.color} ${
-                  activePreset === index ? "ring-2 ring-primary ring-offset-2" : ""
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  {preset.icon}
-                  <span className="font-semibold text-sm">{preset.name}</span>
-                </div>
-                <p className="text-xs opacity-70">{preset.description}</p>
-              </button>
-            ))}
-          </div>
-        </div>
 
         <div className="grid lg:grid-cols-[400px_1fr] gap-6">
           <div className="space-y-4">
             <Card>
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <DollarSign className="h-5 w-5 text-primary" />
-                  Your Numbers
-                </CardTitle>
+                <CardTitle className="text-lg">Your Numbers</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <CalcField label="Selling Price" tooltip="Price per unit" value={inputs.sellingPrice} onChange={(v) => updateInput("sellingPrice", v)} prefix="$" placeholder="49.99" />
-                <CalcField label="COGS" tooltip="Cost of goods per unit" value={inputs.cogs} onChange={(v) => updateInput("cogs", v)} prefix="$" placeholder="18" />
-                <CalcField label="Ad Spend" tooltip="Total ad budget" value={inputs.adSpend} onChange={(v) => updateInput("adSpend", v)} prefix="$" placeholder="50" />
-                <CalcField label="Fees" tooltip="Payment processing fees" value={inputs.feesPercent} onChange={(v) => updateInput("feesPercent", v)} suffix="%" placeholder="3" />
+                <CalcField label="Selling Price" value={inputs.sellingPrice} onChange={(v) => updateInput("sellingPrice", v)} prefix="$" placeholder="50" />
+                <CalcField label="Cost of Goods Sold" value={inputs.cogs} onChange={(v) => updateInput("cogs", v)} prefix="$" placeholder="10" />
+                <CalcField label="Tax/VAT" value={inputs.taxPercent} onChange={(v) => updateInput("taxPercent", v)} suffix="%" placeholder="0" />
+                <CalcField label="Ad Spend" value={inputs.adSpend} onChange={(v) => updateInput("adSpend", v)} prefix="$" placeholder="50" />
+                <div className="space-y-1.5">
+                  <Label className="text-sm font-medium">Processing Fees</Label>
+                  <select
+                    value={shopifyPlan}
+                    onChange={(e) => handlePlanChange(e.target.value as ShopifyPlan)}
+                    className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {Object.entries(SHOPIFY_FEES).map(([key, value]) => (
+                      <option key={key} value={key}>{value.label}</option>
+                    ))}
+                  </select>
+                  {shopifyPlan === "custom" && (
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input type="number" value={inputs.feesPercent || ""} onChange={(e) => updateInput("feesPercent", parseFloat(e.target.value) || 0)} placeholder="2.9" className="h-8 text-sm pr-6" />
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">%</span>
+                      </div>
+                      <div className="relative flex-1">
+                        <Input type="number" value={inputs.feesCents || ""} onChange={(e) => updateInput("feesCents", parseFloat(e.target.value) || 0)} placeholder="30" className="h-8 text-sm pr-6" />
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">¢</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <button onClick={() => setShowAdvanced(!showAdvanced)} className="w-full px-6 py-4 flex items-center justify-between text-left">
-                <span className="text-sm font-medium">Advanced Options</span>
-                {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </button>
-              {showAdvanced && (
-                <CardContent className="pt-0 space-y-4">
-                  <CalcField label="Other Costs %" tooltip="Shipping, returns, etc." value={inputs.otherCostsPercent} onChange={(v) => updateInput("otherCostsPercent", v)} suffix="%" placeholder="0" />
-                  <CalcField label="Monthly Overhead" tooltip="Fixed monthly costs" value={inputs.monthlyOverhead} onChange={(v) => updateInput("monthlyOverhead", v)} prefix="$" placeholder="0" />
-                </CardContent>
-              )}
-            </Card>
-
-            <Card>
-              <button onClick={() => setBundleMode(!bundleMode)} className="w-full px-6 py-4 flex items-center justify-between text-left">
-                <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
-                  <span className="text-sm font-medium">Offer Builder</span>
-                </div>
-                {bundleMode && <span className="text-xs text-green-600 font-medium">ON</span>}
-              </button>
-              {bundleMode && (
-                <CardContent className="pt-0 space-y-4">
-                  {bundleTiers.map((tier, index) => (
-                    <div key={index} className="p-3 bg-muted/50 rounded-lg space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Buy {tier.quantity}</span>
-                        {bundleTiers.length > 1 && (
-                          <button onClick={() => removeBundleTier(index)} className="text-muted-foreground hover:text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div>
-                          <Label className="text-xs">Qty</Label>
-                          <Input type="number" value={tier.quantity} onChange={(e) => updateBundleTier(index, "quantity", parseInt(e.target.value) || 0)} className="h-8 text-sm" />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Price</Label>
-                          <Input type="number" value={tier.price} onChange={(e) => updateBundleTier(index, "price", parseFloat(e.target.value) || 0)} className="h-8 text-sm" />
-                        </div>
-                        <div>
-                          <Label className="text-xs">COGS/unit</Label>
-                          <Input type="number" value={tier.cogsPerUnit} onChange={(e) => updateBundleTier(index, "cogsPerUnit", parseFloat(e.target.value) || 0)} className="h-8 text-sm" />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {bundleTiers.length < 4 && (
-                    <Button variant="outline" size="sm" onClick={addBundleTier} className="w-full gap-2">
-                      <Plus className="h-4 w-4" /> Add Offer
-                    </Button>
-                  )}
-                </CardContent>
-              )}
-            </Card>
           </div>
 
           <div className="space-y-4">
-            {bundleMode && bundleResults.length > 0 ? (
-              <Card className="border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-pink-500/5">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5 text-purple-600" />
-                    Offer Comparison
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-3">
-                    {bundleResults.map((result, index) => (
-                      <div key={index} className="p-4 bg-card rounded-lg border">
-                        <div className="flex justify-between mb-3">
-                          <span className="font-semibold">Buy {result.quantity}</span>
-                          <span className="font-bold">${result.price}</span>
-                        </div>
-                        <div className="grid grid-cols-4 gap-2 text-sm">
-                          <div><p className="text-xs text-muted-foreground">COGS</p><p className="font-medium">${result.totalCogs}</p></div>
-                          <div><p className="text-xs text-muted-foreground">Profit</p><p className={`font-medium ${result.profitPerOrder > 0 ? "text-green-600" : "text-red-600"}`}>${result.profitPerOrder.toFixed(2)}</p></div>
-                          <div><p className="text-xs text-muted-foreground">BE ROAS</p><p className="font-medium text-yellow-600">{result.breakevenRoas.toFixed(2)}x</p></div>
-                          <div><p className="text-xs text-muted-foreground">Orders</p><p className="font-medium text-green-600">{result.breakevenOrders}</p></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ) : results.isValid ? (
-              <>
-                <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-blue-500/30">
+                <Card className="bg-gradient-to-br from-green-100 to-green-50 border-green-200">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                        <Target className="h-5 w-5 text-blue-600" />
+                      <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <Target className="h-5 w-5 text-green-500" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-lg">Pre-Sale Analysis</h3>
-                        <p className="text-sm text-muted-foreground">Your breakeven numbers</p>
+                        <h3 className="font-semibold text-lg">Unit Economics</h3>
+                        <p className="text-sm text-muted-foreground">Your profit per sale</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-card rounded-lg border">
-                        <p className="text-xs text-muted-foreground uppercase mb-1">Profit Per Unit</p>
-                        <p className="text-2xl font-bold text-green-600">${results.profitPerUnit.toFixed(2)}</p>
+                        <p className="text-xs text-muted-foreground uppercase mb-1">Profit/Unit</p>
+                        <p className="text-2xl font-bold text-green-500">{results.hasSellingPrice ? `$${results.profitPerUnit.toFixed(2)}` : "—"}</p>
+                        {!results.hasSellingPrice && <p className="text-xs text-muted-foreground mt-1">Add selling price</p>}
                       </div>
                       <div className="p-4 bg-card rounded-lg border">
-                        <p className="text-xs text-muted-foreground uppercase mb-1">Contribution</p>
-                        <p className="text-2xl font-bold text-primary">{((results.profitPerUnit / inputs.sellingPrice) * 100).toFixed(1)}%</p>
+                        <p className="text-xs text-muted-foreground uppercase mb-1">Net Margin</p>
+                        <p className="text-2xl font-bold text-green-500">{results.hasSellingPrice ? `${((results.profitPerUnit / inputs.sellingPrice) * 100).toFixed(0)}%` : "—"}</p>
+                        {!results.hasSellingPrice && <p className="text-xs text-muted-foreground mt-1">Add selling price</p>}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-yellow-500/30">
+                <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
-                      <Target className="h-4 w-4 text-yellow-600" />
+                      <Target className="h-4 w-4 text-green-500" />
                       Breakeven Point
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-yellow-500/5 rounded-lg border border-yellow-500/20">
+                      <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
                         <p className="text-xs text-muted-foreground uppercase mb-1">Breakeven ROAS</p>
-                        <p className="text-3xl font-bold text-yellow-600">{results.breakevenRoas.toFixed(2)}x</p>
-                        <p className="text-xs text-muted-foreground mt-1">Minimum ROAS needed</p>
+                        <p className="text-3xl font-bold text-amber-500">{results.hasSellingPrice && results.breakevenRoas > 0 ? `${results.breakevenRoas.toFixed(2)}x` : "—"}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{results.hasSellingPrice ? "Minimum ROAS needed" : "Add selling price"}</p>
                       </div>
-                      <div className="p-4 bg-green-500/5 rounded-lg border border-green-500/20">
+                      <div className="p-4 bg-green-50 rounded-lg border border-green-200">
                         <p className="text-xs text-muted-foreground uppercase mb-1">Units to Profit</p>
-                        <p className="text-3xl font-bold text-green-600">{results.breakevenUnits}</p>
-                        <p className="text-xs text-muted-foreground mt-1">${(results.breakevenUnits * inputs.sellingPrice).toLocaleString()} revenue</p>
+                        {results.hasAdSpend ? (
+                          <>
+                            <p className="text-3xl font-bold text-green-500">{results.breakevenUnits}</p>
+                            <p className="text-xs text-muted-foreground mt-1">${(results.breakevenUnits * inputs.sellingPrice).toLocaleString()} revenue</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-3xl font-bold text-muted-foreground">—</p>
+                            <p className="text-xs text-muted-foreground mt-1">Add ad spend</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              </>
-            ) : (
-              <Card className="border-yellow-500/30 bg-yellow-500/5">
-                <CardContent className="p-6 text-center">
-                  <Calculator className="h-12 w-12 text-yellow-600 mx-auto mb-3" />
-                  <p className="text-yellow-600 font-medium">Enter valid numbers to see results</p>
-                </CardContent>
-              </Card>
-            )}
+
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-green-500" />
+                      Net Profit Scenarios
+                    </CardTitle>
+                    <p className="text-xs text-muted-foreground">At your ${inputs.sellingPrice} selling price</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left py-1.5 pl-3 font-medium text-muted-foreground">Margin</th>
+                            <th className="text-right py-1.5 font-medium text-muted-foreground">Price</th>
+                            <th className="text-right py-1.5 font-medium text-muted-foreground">BE ROAS</th>
+                            <th className="text-right py-1.5 pr-3 font-medium text-muted-foreground">Orders</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {marginScenarios.map((scenario) => (
+                            <tr key={scenario.margin} className={`border-b border-muted/50 ${MARGIN_COLORS[scenario.margin] || ""}`}>
+                              <td className="py-1.5 pl-3 font-medium">{scenario.margin === 0 ? "BE" : `${(scenario.margin * 100).toFixed(0)}%`}</td>
+                              <td className="text-right py-1.5">${inputs.sellingPrice}</td>
+                              <td className="text-right py-1.5 text-amber-500">{isFinite(scenario.breakevenRoas) ? `${scenario.breakevenRoas.toFixed(2)}x` : "∞"}</td>
+                              <td className="text-right py-1.5 pr-3">{isFinite(scenario.breakevenOrders) ? scenario.breakevenOrders : "∞"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-3">Higher margin = more profit per sale</p>
+                  </CardContent>
+                </Card>
           </div>
         </div>
       </main>
 
-      <footer className="border-t mt-16 py-8 text-center text-sm text-muted-foreground">
+      <footer className="border-t mt-4 py-4 text-center text-sm text-muted-foreground">
         <p>Free forever. By TrueMargin.</p>
       </footer>
     </div>
