@@ -256,7 +256,7 @@ export function ProfitCalculator() {
                     )}
                   </div>
                   {waitlistStatus === "success" ? (
-                    <p className="text-[#00d084] font-bold py-2">You're on the list! 🎉</p>
+                    <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
                   ) : (
                     <>
                       <button
