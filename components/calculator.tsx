@@ -209,10 +209,10 @@ export function ProfitCalculator() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <main className="mx-auto max-w-6xl px-4 pt-12 pb-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 lg:mb-16">
           <img src="/logo-black.png" alt="TrueMargin Labs" className="h-20 mx-auto mb-2" />
           <img src="/typeface-lightblack.png" alt="TrueMargin Labs" className="h-8 mx-auto mb-4" />
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto px-4 sm:px-0">
             Calculate your true margin, breakeven ROAS, PROAS, and exactly how many sales you need before spending on ads.
           </p>
         </div>
@@ -256,7 +256,8 @@ export function ProfitCalculator() {
               </CardContent>
             </Card>
 
-            <Card className="border-[#00d084]/30 flex-1">
+            {/* APEX card - desktop only (in sidebar) */}
+            <Card className="border-[#00d084]/30 flex-1 hidden lg:block">
               <CardContent className="p-6 text-center flex flex-col justify-center h-full">
                 <img src="/apex-coming-soon.png" alt="True Margin APEX - Arriving March 2026" className="h-[61px] mx-auto mb-6" />
                 <div className="space-y-3">
@@ -298,7 +299,6 @@ export function ProfitCalculator() {
                 </div>
               </CardContent>
             </Card>
-
           </div>
 
           <div className="space-y-4">
@@ -397,6 +397,50 @@ export function ProfitCalculator() {
                 </Card>
           </div>
         </div>
+
+        {/* APEX card - mobile only (at bottom) */}
+        <Card className="border-[#00d084]/30 mt-6 max-w-md mx-auto lg:hidden">
+          <CardContent className="p-6 text-center">
+            <img src="/apex-coming-soon.png" alt="True Margin APEX - Arriving March 2026" className="h-[61px] mx-auto mb-6" />
+            <div className="space-y-3">
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setEmailFocused(true)}
+                  onBlur={() => setEmailFocused(false)}
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-center ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                />
+                {!emailFocused && !email && (
+                  <span className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground pointer-events-none">
+                    Enter your email
+                  </span>
+                )}
+              </div>
+              {waitlistStatus === "success" ? (
+                <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
+              ) : (
+                <>
+                  <button
+                    onClick={handleWaitlist}
+                    disabled={waitlistStatus === "loading" || !isValidEmail}
+                    style={{
+                      background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
+                      boxShadow: "0 12px 32px rgba(0, 208, 132, 0.35)",
+                    }}
+                    className="w-full text-white font-bold py-3 px-4 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_40px_rgba(0,208,132,0.45)]"
+                  >
+                    {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
+                  </button>
+                  {waitlistStatus === "error" && (
+                    <p className="text-red-500 text-sm mt-2">Something went wrong. Please try again.</p>
+                  )}
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </main>
 
       <footer className="border-t mt-8 py-6 text-center">
