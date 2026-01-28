@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import confetti from "canvas-confetti";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -111,8 +112,27 @@ export function ProfitCalculator() {
   const [waitlistStatus, setWaitlistStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const isValidEmail = EMAIL_REGEX.test(email);
+  const [confettiOrigin, setConfettiOrigin] = useState({ x: 0.5, y: 0.5 });
 
-  const handleWaitlist = async () => {
+  // Confetti on successful signup
+  useEffect(() => {
+    if (waitlistStatus === "success") {
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: confettiOrigin,
+        colors: ["#00d084", "#00ff9f", "#ffffff"],
+      });
+    }
+  }, [waitlistStatus, confettiOrigin]);
+
+  const handleWaitlist = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Capture click position for confetti
+    const rect = e.currentTarget.getBoundingClientRect();
+    setConfettiOrigin({
+      x: (rect.left + rect.width / 2) / window.innerWidth,
+      y: (rect.top + rect.height / 2) / window.innerHeight,
+    });
     if (!isValidEmail) return;
     setWaitlistStatus("loading");
     try {
