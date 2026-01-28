@@ -259,7 +259,7 @@ export function ProfitCalculator() {
             {/* APEX card - desktop only (in sidebar) */}
             <Card className="border-[#00d084]/30 flex-1 hidden lg:block">
               <CardContent className="p-6 text-center flex flex-col justify-center h-full">
-                <img src="/apex-coming-soon.png" alt="True Margin APEX - Arriving March 2026" className="h-[61px] mx-auto mb-6" />
+                <img src="/apex-typeface2.png" alt="True Margin APEX - Arriving March 2026" className="h-[61px] mx-auto mb-6" />
                 {waitlistStatus === "success" ? (
                   <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
                 ) : (
@@ -363,7 +363,7 @@ export function ProfitCalculator() {
                 {/* Mobile email signup */}
                 <Card className="lg:hidden border-[#00d084]/30">
                   <CardContent className="p-4 text-center">
-                    <img src="/apex-coming-soon.png" alt="True Margin APEX" className="h-12 mx-auto mb-3" />
+                    <img src="/apex-typeface2.png" alt="True Margin APEX" className="h-12 mx-auto mb-3" />
                     {waitlistStatus === "success" ? (
                       <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
                     ) : (
@@ -450,7 +450,7 @@ export function ProfitCalculator() {
       {waitlistStatus !== "success" && (
         <div className="hidden sm:block fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-4 z-50">
           <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-            <img src="/apex-coming-soon.png" alt="True Margin APEX" className="h-20 hidden sm:block" />
+            <img src="/apex-typeface2.png" alt="True Margin APEX" className="h-20 hidden sm:block" />
             <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
               <input
                 type="email"
