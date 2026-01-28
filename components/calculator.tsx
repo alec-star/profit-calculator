@@ -260,26 +260,28 @@ export function ProfitCalculator() {
             <Card className="border-[#00d084]/30 flex-1 hidden lg:block">
               <CardContent className="p-6 text-center flex flex-col justify-center h-full">
                 <img src="/apex-coming-soon.png" alt="True Margin APEX - Arriving March 2026" className="h-[61px] mx-auto mb-6" />
-                <div className="space-y-3">
-                  <div className="relative">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onFocus={() => setEmailFocused(true)}
-                      onBlur={() => setEmailFocused(false)}
-                      className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-center ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    />
-                    {!emailFocused && !email && (
-                      <span className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground pointer-events-none">
-                        Enter your email
-                      </span>
-                    )}
-                  </div>
-                  {waitlistStatus === "success" ? (
-                    <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
-                  ) : (
-                    <>
+                {waitlistStatus === "success" ? (
+                  <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex gap-3">
+                      <div className="relative flex-[2]">
+                        <input
+                          type="email"
+                          name="email"
+                          autoComplete="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          onFocus={() => setEmailFocused(true)}
+                          onBlur={() => setEmailFocused(false)}
+                          className="flex h-14 w-full rounded-md border border-input bg-background px-4 py-3 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        />
+                        {!emailFocused && !email && (
+                          <span className="absolute inset-0 flex items-center justify-start pl-4 text-base text-muted-foreground pointer-events-none">
+                            Enter your email
+                          </span>
+                        )}
+                      </div>
                       <button
                         onClick={handleWaitlist}
                         disabled={waitlistStatus === "loading" || !isValidEmail}
@@ -287,16 +289,16 @@ export function ProfitCalculator() {
                           background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
                           boxShadow: "0 12px 32px rgba(0, 208, 132, 0.35)",
                         }}
-                        className="w-full text-white font-bold py-3 px-4 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_40px_rgba(0,208,132,0.45)]"
+                        className="text-white font-bold h-14 px-6 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_40px_rgba(0,208,132,0.45)] whitespace-nowrap"
                       >
                         {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
                       </button>
-                      {waitlistStatus === "error" && (
-                        <p className="text-red-500 text-sm mt-2">Something went wrong. Please try again.</p>
-                      )}
-                    </>
-                  )}
-                </div>
+                    </div>
+                    {waitlistStatus === "error" && (
+                      <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -398,53 +400,57 @@ export function ProfitCalculator() {
           </div>
         </div>
 
-        {/* APEX card - mobile only (at bottom) */}
-        <Card className="border-[#00d084]/30 mt-6 max-w-md mx-auto lg:hidden">
-          <CardContent className="p-6 text-center">
-            <img src="/apex-coming-soon.png" alt="True Margin APEX - Arriving March 2026" className="h-[61px] mx-auto mb-6" />
-            <div className="space-y-3">
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setEmailFocused(true)}
-                  onBlur={() => setEmailFocused(false)}
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-center ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                />
-                {!emailFocused && !email && (
-                  <span className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground pointer-events-none">
-                    Enter your email
-                  </span>
-                )}
-              </div>
-              {waitlistStatus === "success" ? (
-                <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
-              ) : (
-                <>
-                  <button
-                    onClick={handleWaitlist}
-                    disabled={waitlistStatus === "loading" || !isValidEmail}
-                    style={{
-                      background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
-                      boxShadow: "0 12px 32px rgba(0, 208, 132, 0.35)",
-                    }}
-                    className="w-full text-white font-bold py-3 px-4 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_40px_rgba(0,208,132,0.45)]"
-                  >
-                    {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
-                  </button>
-                  {waitlistStatus === "error" && (
-                    <p className="text-red-500 text-sm mt-2">Something went wrong. Please try again.</p>
-                  )}
-                </>
+        </main>
+
+      {/* Sticky email signup footer */}
+      {waitlistStatus !== "success" && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-4 z-50">
+          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4">
+            <img src="/apex-coming-soon.png" alt="True Margin APEX" className="h-20 hidden sm:block" />
+            <div className="relative flex-1 w-full sm:min-w-[200px]">
+              <input
+                type="email"
+                name="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setEmailFocused(true)}
+                onBlur={() => setEmailFocused(false)}
+                className="flex h-16 w-full rounded-lg border border-[#e5e7eb] bg-white px-5 py-4 text-lg text-black text-center sm:text-left focus:outline-none focus:border-[#00d084] focus:ring-2 focus:ring-[#00d084]/20"
+              />
+              {!emailFocused && !email && (
+                <span className="absolute inset-0 flex items-center justify-center sm:justify-start sm:pl-5 text-base text-muted-foreground pointer-events-none">
+                  Enter your email
+                </span>
               )}
             </div>
-          </CardContent>
-        </Card>
-      </main>
+            <button
+              onClick={handleWaitlist}
+              disabled={waitlistStatus === "loading" || !isValidEmail}
+              style={{
+                background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
+                boxShadow: "0 8px 24px rgba(0, 208, 132, 0.35)",
+              }}
+              className="w-full sm:w-auto text-white font-bold text-lg py-4 px-10 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,208,132,0.45)] whitespace-nowrap"
+            >
+              {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
+            </button>
+          </div>
+          {waitlistStatus === "error" && (
+            <p className="text-red-500 text-sm text-center mt-2">Something went wrong. Please try again.</p>
+          )}
+        </div>
+      )}
 
-      <footer className="border-t mt-8 py-6 text-center">
-        <img src="/footer.png" alt="Free forever. By TrueMargin." className="h-6 mx-auto" />
+      {/* Success message - replaces sticky when signed up */}
+      {waitlistStatus === "success" && (
+        <div className="fixed bottom-0 left-0 right-0 bg-[#00d084] p-4 z-50">
+          <p className="text-white font-bold text-center">{"You're on the list! 🎉"}</p>
+        </div>
+      )}
+
+      <footer className="border-t mt-8 py-6 pb-[8.5rem] text-center">
+        <img src="/footer.png" alt="Free forever. By TrueMargin." className="h-7 mx-auto" />
       </footer>
     </div>
   );
