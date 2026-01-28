@@ -360,6 +360,50 @@ export function ProfitCalculator() {
                   </CardContent>
                 </Card>
 
+                {/* Mobile email signup */}
+                <Card className="lg:hidden border-[#00d084]/30">
+                  <CardContent className="p-4 text-center">
+                    <img src="/apex-coming-soon.png" alt="True Margin APEX" className="h-12 mx-auto mb-3" />
+                    {waitlistStatus === "success" ? (
+                      <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <input
+                            type="email"
+                            name="email"
+                            autoComplete="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            onFocus={() => setEmailFocused(true)}
+                            onBlur={() => setEmailFocused(false)}
+                            className="flex h-11 w-full rounded-lg border border-[#e5e7eb] bg-white px-4 py-2 text-base text-black text-center focus:outline-none focus:border-[#00d084] focus:ring-2 focus:ring-[#00d084]/20"
+                          />
+                          {!emailFocused && !email && (
+                            <span className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground pointer-events-none">
+                              Enter your email
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          onClick={handleWaitlist}
+                          disabled={waitlistStatus === "loading" || !isValidEmail}
+                          style={{
+                            background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
+                            boxShadow: "0 8px 24px rgba(0, 208, 132, 0.35)",
+                          }}
+                          className="w-full text-white font-bold text-base py-3 px-6 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,208,132,0.45)]"
+                        >
+                          {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
+                        </button>
+                        {waitlistStatus === "error" && (
+                          <p className="text-red-500 text-sm">Something went wrong. Please try again.</p>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center gap-2">
@@ -402,12 +446,12 @@ export function ProfitCalculator() {
 
         </main>
 
-      {/* Sticky email signup footer */}
+      {/* Sticky email signup footer - desktop only */}
       {waitlistStatus !== "success" && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-4 z-50">
-          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="hidden sm:block fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-4 z-50">
+          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
             <img src="/apex-coming-soon.png" alt="True Margin APEX" className="h-20 hidden sm:block" />
-            <div className="relative flex-1 w-full sm:min-w-[200px]">
+            <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
               <input
                 type="email"
                 name="email"
@@ -416,10 +460,10 @@ export function ProfitCalculator() {
                 onChange={(e) => setEmail(e.target.value)}
                 onFocus={() => setEmailFocused(true)}
                 onBlur={() => setEmailFocused(false)}
-                className="flex h-16 w-full rounded-lg border border-[#e5e7eb] bg-white px-5 py-4 text-lg text-black text-center sm:text-left focus:outline-none focus:border-[#00d084] focus:ring-2 focus:ring-[#00d084]/20"
+                className="flex h-11 sm:h-16 w-full rounded-lg border border-[#e5e7eb] bg-white px-4 sm:px-5 py-2 sm:py-4 text-base sm:text-lg text-black text-center sm:text-left focus:outline-none focus:border-[#00d084] focus:ring-2 focus:ring-[#00d084]/20"
               />
               {!emailFocused && !email && (
-                <span className="absolute inset-0 flex items-center justify-center sm:justify-start sm:pl-5 text-base text-muted-foreground pointer-events-none">
+                <span className="absolute inset-0 flex items-center justify-center sm:justify-start sm:pl-5 text-sm sm:text-base text-muted-foreground pointer-events-none">
                   Enter your email
                 </span>
               )}
@@ -431,7 +475,7 @@ export function ProfitCalculator() {
                 background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
                 boxShadow: "0 8px 24px rgba(0, 208, 132, 0.35)",
               }}
-              className="w-full sm:w-auto text-white font-bold text-lg py-4 px-10 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,208,132,0.45)] whitespace-nowrap"
+              className="w-full sm:w-auto text-white font-bold text-base sm:text-lg py-3 sm:py-4 px-6 sm:px-10 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,208,132,0.45)] whitespace-nowrap"
             >
               {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
             </button>
@@ -449,7 +493,7 @@ export function ProfitCalculator() {
         </div>
       )}
 
-      <footer className="border-t mt-8 py-6 pb-[8.5rem] text-center">
+      <footer className="border-t mt-8 py-6 sm:pb-[8.5rem] text-center">
         <img src="/footer.png" alt="Free forever. By TrueMargin." className="h-7 mx-auto" />
       </footer>
     </div>
