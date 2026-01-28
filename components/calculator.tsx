@@ -291,7 +291,7 @@ export function ProfitCalculator() {
                         }}
                         className="text-white font-bold h-14 px-6 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_40px_rgba(0,208,132,0.45)] whitespace-nowrap"
                       >
-                        {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
+                        {waitlistStatus === "loading" ? "Joining..." : "Get Early Access"}
                       </button>
                     </div>
                     {waitlistStatus === "error" && (
@@ -394,7 +394,7 @@ export function ProfitCalculator() {
                           }}
                           className="w-full text-white font-bold text-base py-3 px-6 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,208,132,0.45)]"
                         >
-                          {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
+                          {waitlistStatus === "loading" ? "Joining..." : "Get Early Access"}
                         </button>
                         {waitlistStatus === "error" && (
                           <p className="text-red-500 text-sm">Something went wrong. Please try again.</p>
@@ -477,7 +477,7 @@ export function ProfitCalculator() {
               }}
               className="w-full sm:w-auto text-white font-bold text-base sm:text-lg py-3 sm:py-4 px-6 sm:px-10 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,208,132,0.45)] whitespace-nowrap"
             >
-              {waitlistStatus === "loading" ? "Joining..." : "Join Waitlist"}
+              {waitlistStatus === "loading" ? "Joining..." : "Get Early Access"}
             </button>
           </div>
           {waitlistStatus === "error" && (
