@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
+import Image from "next/image";
 import confetti from "canvas-confetti";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -110,30 +111,29 @@ export function ProfitCalculator() {
   const [email, setEmail] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
   const [waitlistStatus, setWaitlistStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [showSuccessFooter, setShowSuccessFooter] = useState(false);
 
   const isValidEmail = EMAIL_REGEX.test(email);
-  const [confettiOrigin, setConfettiOrigin] = useState({ x: 0.5, y: 0.5 });
 
-  // Confetti on successful signup
+  // Show success footer + hide after 3s
   useEffect(() => {
     if (waitlistStatus === "success") {
-      confetti({
-        particleCount: 80,
-        spread: 60,
-        origin: confettiOrigin,
-        colors: ["#00d084", "#00ff9f", "#ffffff"],
-      });
+      setShowSuccessFooter(true);
+      const timer = setTimeout(() => {
+        setShowSuccessFooter(false);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [waitlistStatus, confettiOrigin]);
+  }, [waitlistStatus]);
 
   const handleWaitlist = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Capture click position for confetti
-    const rect = e.currentTarget.getBoundingClientRect();
-    setConfettiOrigin({
-      x: (rect.left + rect.width / 2) / window.innerWidth,
-      y: (rect.top + rect.height / 2) / window.innerHeight,
-    });
     if (!isValidEmail) return;
+
+    // Capture exact cursor position for confetti
+    const clickOrigin = {
+      x: e.clientX / window.innerWidth,
+      y: e.clientY / window.innerHeight,
+    };
     setWaitlistStatus("loading");
     try {
       const res = await fetch("/api/waitlist", {
@@ -142,6 +142,13 @@ export function ProfitCalculator() {
         body: JSON.stringify({ email }),
       });
       if (res.ok) {
+        // Fire confetti from button position
+        confetti({
+          particleCount: 80,
+          spread: 60,
+          origin: clickOrigin,
+          colors: ["#00d084", "#00ff9f", "#ffffff"],
+        });
         setWaitlistStatus("success");
         setEmail("");
       } else {
@@ -210,17 +217,17 @@ export function ProfitCalculator() {
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <main className="mx-auto max-w-6xl px-4 pt-12 pb-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 lg:mb-16">
-          <img src="/logo-black.png" alt="TrueMargin Labs" className="h-[106px] mx-auto mb-2" />
-          <img src="/typeface-lightblack.png" alt="TrueMargin Labs" className="h-8 mx-auto mb-4" />
+          <Image src="/logo-black.png" alt="TrueMargin Labs" width={106} height={106} className="mx-auto mb-2" />
+          <Image src="/typeface-lightblack.png" alt="TrueMargin Labs" width={200} height={24} className="mx-auto mb-4" />
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto px-4 sm:px-0">
-            Calculate your true margin, breakeven ROAS, PROAS, and exactly how many sales you need before spending on ads.
+            Calculate your breakeven ROAS & CPA, profit margin, and exactly how many sales you need before spending on ads.
           </p>
         </div>
 
 
         <div className="grid lg:grid-cols-[400px_1fr] gap-6">
           <div className="flex flex-col gap-4">
-            <Card>
+            <Card className="card-hover">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Your Numbers</CardTitle>
               </CardHeader>
@@ -257,11 +264,11 @@ export function ProfitCalculator() {
             </Card>
 
             {/* APEX card - desktop only (in sidebar) */}
-            <Card className="border-[#00d084]/30 flex-1 hidden lg:block">
+            <Card className="card-hover border-[#00d084]/30 flex-1 hidden lg:block">
               <CardContent className="p-6 text-center flex flex-col justify-center h-full">
-                <img src="/apex-typeface2.png" alt="True Margin APEX - Arriving March 2026" className="h-[61px] mx-auto mb-6" />
+                <Image src="/dashboard-coming-soon.png" alt="True Margin APEX - Arriving March 2026" width={300} height={61} className="mx-auto mb-6" />
                 {waitlistStatus === "success" ? (
-                  <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
+                  <p className="text-[#00d084] font-bold py-2">{"You're on the list!"}</p>
                 ) : (
                   <div className="space-y-3">
                     <div className="flex gap-3">
@@ -306,12 +313,9 @@ export function ProfitCalculator() {
           <div className="space-y-4">
                 <Card>
                   <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-3xl">💰</span>
-                      <div>
-                        <h3 className="font-extrabold text-lg">Unit Economics</h3>
-                        <p className="text-sm text-muted-foreground">Your profit per sale</p>
-                      </div>
+                    <div className="mb-4">
+                      <h3 className="font-extrabold text-lg">Unit Economics</h3>
+                      <p className="text-sm text-muted-foreground">Your profit per sale</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-emerald-50/80 rounded-lg border border-emerald-100">
@@ -330,28 +334,32 @@ export function ProfitCalculator() {
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <span className="text-base">🎯</span>
-                      Breakeven Point
-                    </CardTitle>
+                    <CardTitle className="text-sm">Breakeven Point</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className={`p-4 rounded-lg border ${getRoasBackground(results.breakevenRoas)}`}>
                         <p className="text-xs text-muted-foreground uppercase mb-1">Breakeven ROAS</p>
-                        <p className="text-3xl font-extrabold text-[#00d084]">{results.hasSellingPrice && results.breakevenRoas > 0 ? `${results.breakevenRoas.toFixed(2)}x` : "—"}</p>
+                        <p className="text-2xl sm:text-3xl font-extrabold text-[#00d084]">
+                          {results.hasSellingPrice && results.breakevenRoas > 0 ? `${results.breakevenRoas.toFixed(2)}x` : "—"}
+                        </p>
+                        {results.hasSellingPrice && results.breakevenRoas > 0 && (
+                          <p className="text-sm font-semibold text-muted-foreground">
+                            ${(inputs.sellingPrice / results.breakevenRoas).toFixed(2)} CPA
+                          </p>
+                        )}
                         <p className="text-xs text-muted-foreground mt-1">{results.hasSellingPrice ? "Minimum ROAS needed" : "Add selling price"}</p>
                       </div>
                       <div className="p-4 bg-emerald-50/80 rounded-lg border border-emerald-100">
                         <p className="text-xs text-muted-foreground uppercase mb-1">Units to Profit</p>
                         {results.hasAdSpend ? (
                           <>
-                            <p className="text-3xl font-extrabold text-[#00d084]">{results.breakevenUnits}</p>
+                            <p className="text-2xl sm:text-3xl font-extrabold text-[#00d084]">{results.breakevenUnits}</p>
                             <p className="text-xs text-muted-foreground mt-1">${(results.breakevenUnits * inputs.sellingPrice).toLocaleString()} revenue</p>
                           </>
                         ) : (
                           <>
-                            <p className="text-3xl font-extrabold text-muted-foreground">—</p>
+                            <p className="text-2xl sm:text-3xl font-extrabold text-muted-foreground">—</p>
                             <p className="text-xs text-muted-foreground mt-1">Add ad spend</p>
                           </>
                         )}
@@ -363,9 +371,9 @@ export function ProfitCalculator() {
                 {/* Mobile email signup */}
                 <Card className="lg:hidden border-[#00d084]/30">
                   <CardContent className="p-4 text-center">
-                    <img src="/apex-typeface2.png" alt="True Margin APEX" className="h-12 mx-auto mb-3" />
+                    <Image src="/dashboard-coming-soon.png" alt="True Margin APEX" width={200} height={48} className="mx-auto mb-3" />
                     {waitlistStatus === "success" ? (
-                      <p className="text-[#00d084] font-bold py-2">{"You're on the list! 🎉"}</p>
+                      <p className="text-[#00d084] font-bold py-2">{"You're on the list!"}</p>
                     ) : (
                       <div className="space-y-2">
                         <div className="relative">
@@ -377,10 +385,10 @@ export function ProfitCalculator() {
                             onChange={(e) => setEmail(e.target.value)}
                             onFocus={() => setEmailFocused(true)}
                             onBlur={() => setEmailFocused(false)}
-                            className="flex h-11 w-full rounded-lg border border-[#e5e7eb] bg-white px-4 py-2 text-base text-black text-center focus:outline-none focus:border-[#00d084] focus:ring-2 focus:ring-[#00d084]/20"
+                            className="flex h-11 w-full rounded-lg border border-[#e5e7eb] bg-white px-4 py-2 text-base text-black text-left focus:outline-none focus:border-[#00d084] focus:ring-2 focus:ring-[#00d084]/20"
                           />
                           {!emailFocused && !email && (
-                            <span className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground pointer-events-none">
+                            <span className="absolute inset-0 flex items-center justify-start pl-4 text-sm text-muted-foreground pointer-events-none">
                               Enter your email
                             </span>
                           )}
@@ -406,10 +414,7 @@ export function ProfitCalculator() {
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <span className="text-base">✨</span>
-                      Net Margin Scenarios
-                    </CardTitle>
+                    <CardTitle className="text-sm">Net Margin Scenarios</CardTitle>
                     <p className="text-xs text-muted-foreground">At your ${inputs.sellingPrice} selling price</p>
                   </CardHeader>
                   <CardContent>
@@ -447,54 +452,58 @@ export function ProfitCalculator() {
         </main>
 
       {/* Sticky email signup footer - desktop only */}
-      {waitlistStatus !== "success" && (
-        <div className="hidden sm:block fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-4 z-50">
-          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-            <img src="/apex-typeface2.png" alt="True Margin APEX" className="h-20 hidden sm:block" />
-            <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
-              <input
-                type="email"
-                name="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setEmailFocused(true)}
-                onBlur={() => setEmailFocused(false)}
-                className="flex h-11 sm:h-16 w-full rounded-lg border border-[#e5e7eb] bg-white px-4 sm:px-5 py-2 sm:py-4 text-base sm:text-lg text-black text-center sm:text-left focus:outline-none focus:border-[#00d084] focus:ring-2 focus:ring-[#00d084]/20"
-              />
-              {!emailFocused && !email && (
-                <span className="absolute inset-0 flex items-center justify-center sm:justify-start sm:pl-5 text-sm sm:text-base text-muted-foreground pointer-events-none">
-                  Enter your email
-                </span>
-              )}
-            </div>
-            <button
-              onClick={handleWaitlist}
-              disabled={waitlistStatus === "loading" || !isValidEmail}
-              style={{
-                background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
-                boxShadow: "0 8px 24px rgba(0, 208, 132, 0.35)",
-              }}
-              className="w-full sm:w-auto text-white font-bold text-base sm:text-lg py-3 sm:py-4 px-6 sm:px-10 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,208,132,0.45)] whitespace-nowrap"
-            >
-              {waitlistStatus === "loading" ? "Joining..." : "Get Early Access"}
-            </button>
-          </div>
-          {waitlistStatus === "error" && (
-            <p className="text-red-500 text-sm text-center mt-2">Something went wrong. Please try again.</p>
+      <div className="footer-hover hidden sm:block fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-4 z-50">
+        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+          <Image src="/dashboard-coming-soon.png" alt="True Margin APEX" width={250} height={80} className="hidden sm:block" />
+          {waitlistStatus === "success" ? (
+            <p className="text-[#00d084] font-bold text-lg">{"You're on the list!"}</p>
+          ) : (
+            <>
+              <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setEmailFocused(true)}
+                  onBlur={() => setEmailFocused(false)}
+                  className="flex h-11 sm:h-16 w-full rounded-lg border border-[#e5e7eb] bg-white px-4 sm:px-5 py-2 sm:py-4 text-base sm:text-lg text-black text-left focus:outline-none focus:border-[#00d084] focus:ring-2 focus:ring-[#00d084]/20"
+                />
+                {!emailFocused && !email && (
+                  <span className="absolute inset-0 flex items-center justify-start pl-4 sm:pl-5 text-sm sm:text-base text-muted-foreground pointer-events-none">
+                    Enter your email
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={handleWaitlist}
+                disabled={waitlistStatus === "loading" || !isValidEmail}
+                style={{
+                  background: "linear-gradient(135deg, #00d084 0%, #00ff9f 100%)",
+                  boxShadow: "0 8px 24px rgba(0, 208, 132, 0.35)",
+                }}
+                className="w-full sm:w-auto text-white font-bold text-base sm:text-lg py-3 sm:py-4 px-6 sm:px-10 rounded-lg cursor-pointer transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_32px_rgba(0,208,132,0.45)] whitespace-nowrap"
+              >
+                {waitlistStatus === "loading" ? "Joining..." : "Get Early Access"}
+              </button>
+            </>
           )}
         </div>
-      )}
+        {waitlistStatus === "error" && (
+          <p className="text-red-500 text-sm text-center mt-2">Something went wrong. Please try again.</p>
+        )}
+      </div>
 
-      {/* Success message - replaces sticky when signed up */}
-      {waitlistStatus === "success" && (
-        <div className="fixed bottom-0 left-0 right-0 bg-[#00d084] p-4 z-50">
-          <p className="text-white font-bold text-center">{"You're on the list! 🎉"}</p>
+      {/* Success message - fades out after 3s */}
+      {showSuccessFooter && (
+        <div className="success-footer fixed bottom-0 left-0 right-0 bg-[#00d084] p-4 z-50">
+          <p className="text-white font-bold text-center">{"You're on the list!"}</p>
         </div>
       )}
 
       <footer className="border-t mt-8 py-6 sm:pb-[8.5rem] text-center">
-        <img src="/footer.png" alt="Free forever. By TrueMargin." className="h-7 mx-auto" />
+        <Image src="/footer.png" alt="Free forever. By TrueMargin." width={200} height={28} className="mx-auto" />
       </footer>
     </div>
   );
