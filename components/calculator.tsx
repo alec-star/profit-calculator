@@ -210,7 +210,7 @@ export function ProfitCalculator() {
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <main className="mx-auto max-w-6xl px-4 pt-12 pb-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 lg:mb-16">
-          <img src="/logo-black.png" alt="TrueMargin Labs" className="h-20 mx-auto mb-2" />
+          <img src="/logo-black.png" alt="TrueMargin Labs" className="h-[106px] mx-auto mb-2" />
           <img src="/typeface-lightblack.png" alt="TrueMargin Labs" className="h-8 mx-auto mb-4" />
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto px-4 sm:px-0">
             Calculate your true margin, breakeven ROAS, PROAS, and exactly how many sales you need before spending on ads.

@@ -1,5 +1,5 @@
-import { ProfitCalculator } from "@/components/calculator";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  return <ProfitCalculator />;
+  redirect("/breakeven-roas-profit-calculator");
 }
