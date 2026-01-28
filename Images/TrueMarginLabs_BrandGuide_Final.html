@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>True Margin Labs — Brand Identity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --white: #ffffff;
+            --black: #0a0a0a;
+            --green-bright: #00ff9f;
+            --green-main: #00d084;
+            --green-dark: #00a86b;
+            --gray-dark: #1a1a1a;
+            --gray-text: #6b7280;
+            --gray-light: #f9fafb;
+            --gray-border: #e5e7eb;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+        }
+
+        .header {
+            position: relative;
+            padding: 100px 40px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--gray-light) 100%);
+            border-bottom: 5px solid var(--green-main);
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '✨';
+            position: absolute;
+            top: 40px;
+            right: 80px;
+            font-size: 56px;
+            opacity: 0.15;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.15; transform: scale(1); }
+            50% { opacity: 0.25; transform: scale(1.1); }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 50px;
+        }
+
+        .logo-emoji {
+            font-size: 56px;
+            line-height: 1;
+        }
+
+        .logo-text h1 {
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            color: var(--black);
+            margin: 0;
+        }
+
+        .logo-text p {
+            font-size: 14px;
+            color: var(--green-main);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin: 6px 0 0 0;
+        }
+
+        .header h2 {
+            font-size: 52px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--black) 0%, var(--green-main) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: var(--gray-text);
+            max-width: 700px;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        section {
+            padding: 100px 0;
+            border-bottom: 1px solid var(--gray-border);
+        }
+
+        section:last-child {
+            border-bottom: none;
+            padding-bottom: 80px;
+        }
+
+        section h2 {
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            margin-bottom: 16px;
+            color: var(--black);
+            position: relative;
+            display: inline-block;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -16px;
+            left: 0;
+            width: 80px;
+            height: 6px;
+            background: linear-gradient(90deg, var(--green-main) 0%, var(--green-bright) 100%);
+            border-radius: 3px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--gray-text);
+            margin-top: 40px;
+            margin-bottom: 50px;
+            max-width: 700px;
+            font-weight: 500;
+        }
+
+        /* Brand Essence Cards */
+        .essence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 28px;
+            margin-top: 50px;
+        }
+
+        .essence-card {
+            padding: 32px;
+            background: var(--white);
+            border: 2px solid var(--gray-border);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .essence-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 0;
+            background: linear-gradient(180deg, var(--green-main) 0%, var(--green-bright) 100%);
+            transition: height 0.4s ease;
+        }
+
+        .essence-card:hover {
+            border-color: var(--green-main);
+            box-shadow: 0 16px 40px rgba(0, 208, 132, 0.12);
+            transform: translateY(-6px);
+        }
+
+        .essence-card:hover::before {
+            height: 100%;
+        }
+
+        .essence-card h3 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--black);
+        }
+
+        .essence-card p {
+            font-size: 15px;
+            color: var(--gray-text);
+            line-height: 1.7;
+        }
+
+        /* Color Swatches */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            margin-top: 50px;
+        }
+
+        .color-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--gray-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .color-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 48px rgba(0, 208, 132, 0.15);
+        }
+
+        .color-display {
+            width: 100%;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 14px;
+        }
+
+        .color-display.green-bright {
+            background: var(--green-bright);
+            box-shadow: 0 12px 32px rgba(0, 255, 159, 0.4);
+        }
+
+        .color-display.green-main {
+            background: var(--green-main);
+            box-shadow: 0 12px 32px rgba(0, 208, 132, 0.3);
+        }
+
+        .color-display.green-dark {
+            background: var(--green-dark);
+            box-shadow: 0 8px 24px rgba(0, 168, 107, 0.2);
+        }
+
+        .color-display.white {
+            background: var(--white);
+            border: 2px solid var(--gray-border);
+            color: var(--black);
+        }
+
+        .color-display.black {
+            background: var(--black);
+        }
+
+        .color-display.light {
+            background: var(--gray-light);
+            border: 2px solid var(--gray-border);
+            color: var(--black);
+        }
+
+        .color-info {
+            background: var(--gray-light);
+            padding: 20px;
+        }
+
+        .color-name {
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        .color-value {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--gray-text);
+        }
+
+        .color-usage {
+            font-size: 12px;
+            color: var(--gray-text);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 208, 132, 0.08) 0%, rgba(0, 255, 159, 0.04) 100%);
+            border: 2px solid var(--green-main);
+            border-radius: 12px;
+            padding: 40px;
+            margin: 50px 0;
+            text-align: center;
+        }
+
+        .highlight-box h3 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--black);
+        }
+
+        .highlight-box p {
+            font-size: 18px;
+            color: var(--gray-text);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Typography */
+        .typo-grid {
+            display: grid;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .typo-item {
+            padding: 32px;
+            background: var(--gray-light);
+            border-radius: 12px;
+            border: 1px solid var(--gray-border);
+            transition: all 0.3s ease;
+        }
+
+        .typo-item:hover {
+            background: var(--white);
+            border-color: var(--green-main);
+        }
+
+        .typo-label {
+            font-size: 12px;
+            color: var(--green-main);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .typo-sample {
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--black);
+        }
+
+        .typo-spec {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--gray-text);
+            line-height: 1.6;
+        }
+
+        /* Components */
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+            margin-top: 50px;
+        }
+
+        .component {
+            background: var(--white);
+            border: 1px solid var(--gray-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .component-demo {
+            background: var(--gray-light);
+            padding: 48px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .component-info {
+            padding: 24px;
+            border-top: 1px solid var(--gray-border);
+        }
+
+        .component-info h3 {
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--black);
+        }
+
+        .component-info p {
+            font-size: 14px;
+            color: var(--gray-text);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-main) 0%, var(--green-bright) 100%);
+            color: var(--white);
+            box-shadow: 0 12px 32px rgba(0, 208, 132, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px rgba(0, 208, 132, 0.45);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--green-main);
+            border: 2px solid var(--green-main);
+        }
+
+        .btn-secondary:hover {
+            background: var(--green-main);
+            color: var(--white);
+        }
+
+        /* Do's & Don'ts */
+        .guidelines-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 50px;
+        }
+
+        .guideline-section {
+            padding: 40px;
+            border-radius: 12px;
+            border-top: 4px solid;
+        }
+
+        .guideline-section.do {
+            background: rgba(0, 208, 132, 0.06);
+            border-top-color: var(--green-main);
+        }
+
+        .guideline-section.dont {
+            background: rgba(239, 68, 68, 0.06);
+            border-top-color: #ef4444;
+        }
+
+        .guideline-section h3 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .guideline-section.do h3 {
+            color: var(--green-main);
+        }
+
+        .guideline-section.dont h3 {
+            color: #ef4444;
+        }
+
+        .guideline-list {
+            list-style: none;
+        }
+
+        .guideline-list li {
+            font-size: 15px;
+            margin-bottom: 14px;
+            padding-left: 28px;
+            position: relative;
+            color: var(--gray-text);
+            line-height: 1.6;
+        }
+
+        .guideline-section.do li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--green-main);
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .guideline-section.dont li::before {
+            content: '✕';
+            position: absolute;
+            left: 0;
+            color: #ef4444;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        /* Social Callout */
+        .social-note {
+            background: linear-gradient(135deg, var(--green-main) 0%, var(--green-bright) 100%);
+            color: var(--white);
+            padding: 48px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 50px 0;
+            box-shadow: 0 20px 48px rgba(0, 208, 132, 0.25);
+        }
+
+        .social-note h3 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--white);
+        }
+
+        .social-note p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-light);
+            padding: 60px 40px;
+            text-align: center;
+            border-top: 2px solid var(--green-main);
+            margin-top: 80px;
+        }
+
+        .footer p {
+            font-size: 14px;
+            color: var(--gray-text);
+            margin: 8px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 60px 24px;
+            }
+
+            .container {
+                padding: 0 24px;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            section h2 {
+                font-size: 32px;
+            }
+
+            .logo-text h1 {
+                font-size: 28px;
+            }
+
+            .header h2 {
+                font-size: 36px;
+            }
+
+            .guidelines-split {
+                grid-template-columns: 1fr;
+            }
+
+            .guidelines-split > * {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-row">
+                <div class="logo-emoji">💰</div>
+                <div class="logo-text">
+                    <h1>True Margin Labs</h1>
+                    <p>Dopamine Driven • Innovation Lab</p>
+                </div>
+            </div>
+            <h2>Brand Identity & Guidelines</h2>
+            <p>White backgrounds. Punchy emerald green. Emoji-first design. Premium feel. Built for social. This is dopamine candy wrapped in innovation lab credibility.</p>
+        </div>
+    </div>
+
+    <!-- Brand Essence -->
+    <section class="container">
+        <h2>Brand Essence</h2>
+        <p class="subtitle">The philosophy that drives every design decision at True Margin Labs.</p>
+
+        <div class="essence-grid">
+            <div class="essence-card">
+                <h3>🎯 Dopamine Fuel</h3>
+                <p>Every interaction should feel like a win. Confetti. Bold achievements. Emojis that celebrate. We're building the best UX porn in the space.</p>
+            </div>
+            <div class="essence-card">
+                <h3>✨ Innovation Lab</h3>
+                <p>Premium. Cutting-edge. Like Neo from 1X. We balance celebratory energy with technical credibility. Dopamine candy, but make it sophisticated.</p>
+            </div>
+            <div class="essence-card">
+                <h3>⚪ White First</h3>
+                <p>Clean. Modern. Minimal. White backgrounds let our emerald green absolutely SCREAM. Everything else gets out of the way.</p>
+            </div>
+            <div class="essence-card">
+                <h3>🤖 Smart, Not Cute</h3>
+                <p>Emojis yes. Ugly icons never. We use emoji because they're universal, expressive, and share beautifully on social. No janky custom graphics.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Color System -->
+    <section class="container">
+        <h2>Color System</h2>
+        <p class="subtitle">Emerald green that pops. Everything else stays minimal and white. Maximum contrast. Maximum impact.</p>
+
+        <div class="color-grid">
+            <div class="color-card">
+                <div class="color-display green-bright">Bright Green</div>
+                <div class="color-info">
+                    <div class="color-name">Emerald Bright</div>
+                    <div class="color-value">#00ff9f</div>
+                    <div class="color-usage">Accents, highlights, hero moments</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-display green-main">Main Green</div>
+                <div class="color-info">
+                    <div class="color-name">Emerald Main</div>
+                    <div class="color-value">#00d084</div>
+                    <div class="color-usage">Primary brand, buttons, CTAs</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-display green-dark">Dark Green</div>
+                <div class="color-info">
+                    <div class="color-name">Emerald Dark</div>
+                    <div class="color-value">#00a86b</div>
+                    <div class="color-usage">Hover states, active elements</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-display white">White</div>
+                <div class="color-info">
+                    <div class="color-name">Canvas</div>
+                    <div class="color-value">#ffffff</div>
+                    <div class="color-usage">Main background everywhere</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-display black">Black</div>
+                <div class="color-info">
+                    <div class="color-name">Text</div>
+                    <div class="color-value">#0a0a0a</div>
+                    <div class="color-usage">All typography, high contrast</div>
+                </div>
+            </div>
+
+            <div class="color-card">
+                <div class="color-display light">Light Gray</div>
+                <div class="color-info">
+                    <div class="color-name">Subtle Background</div>
+                    <div class="color-value">#f9fafb</div>
+                    <div class="color-usage">Secondary surfaces only</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>🎨 The Green is the Star</h3>
+            <p>Everything is white or light. The emerald green is your only accent color. Let it punch through. No competing colors. No gradients unless they feature green. Maximum contrast = maximum dopamine.</p>
+        </div>
+    </section>
+
+    <!-- Typography -->
+    <section class="container">
+        <h2>Typography</h2>
+        <p class="subtitle">Bold, confident, modern. System fonts for reliability. Generous spacing. Let hierarchy do the heavy lifting.</p>
+
+        <div class="typo-grid">
+            <div class="typo-item">
+                <div class="typo-label">Display / Hero</div>
+                <div class="typo-sample" style="font-size: 48px; line-height: 1.1;">Brand Identity Guidelines</div>
+                <div class="typo-spec">Font: System Sans-Serif<br>Size: 48px | Weight: 800 | Letter-spacing: -1.5px</div>
+            </div>
+
+            <div class="typo-item">
+                <div class="typo-label">Heading 2</div>
+                <div class="typo-sample" style="font-size: 36px; line-height: 1.15;">Color System</div>
+                <div class="typo-spec">Font: System Sans-Serif<br>Size: 36px | Weight: 800 | Letter-spacing: -1px</div>
+            </div>
+
+            <div class="typo-item">
+                <div class="typo-label">Body / Default</div>
+                <div class="typo-sample" style="font-size: 16px; font-weight: 400; line-height: 1.8; color: var(--gray-text);">Every interaction should feel like a win. Confetti. Bold achievements. Emojis that celebrate. We're building the best UX experience in the space.</div>
+                <div class="typo-spec">Font: System Sans-Serif<br>Size: 16px | Weight: 400 | Line-height: 1.8</div>
+            </div>
+
+            <div class="typo-item">
+                <div class="typo-label">Small / Caption</div>
+                <div class="typo-sample" style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px;">Dopamine Driven • Innovation Lab</div>
+                <div class="typo-spec">Font: System Sans-Serif<br>Size: 13px | Weight: 700 | Letter-spacing: 0.8px</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Components -->
+    <section class="container">
+        <h2>UI Components</h2>
+        <p class="subtitle">Minimal, functional, beautiful. Let the white background and green accents do the work.</p>
+
+        <div class="component-grid">
+            <div class="component">
+                <div class="component-demo">
+                    <button class="btn btn-primary">Launch Dashboard</button>
+                </div>
+                <div class="component-info">
+                    <h3>Primary Button</h3>
+                    <p>Emerald gradient. Punchy shadow. Use for main CTAs and achievements. Hover lifts up.</p>
+                </div>
+            </div>
+
+            <div class="component">
+                <div class="component-demo">
+                    <button class="btn btn-secondary">Learn More</button>
+                </div>
+                <div class="component-info">
+                    <h3>Secondary Button</h3>
+                    <p>Outlined. Minimal. Use for alternatives. Fills with green on hover.</p>
+                </div>
+            </div>
+
+            <div class="component">
+                <div class="component-demo" style="flex-direction: column;">
+                    <div style="font-size: 32px; font-weight: 800; color: var(--green-main);">$1,847</div>
+                    <div style="font-size: 14px; color: var(--gray-text); margin-top: 8px;">Net Profit</div>
+                </div>
+                <div class="component-info">
+                    <h3>Metric Display</h3>
+                    <p>Large green number. Gray label. Clean hierarchy. This is where dopamine happens.</p>
+                </div>
+            </div>
+
+            <div class="component">
+                <div class="component-demo">
+                    <div style="text-align: center; width: 100%;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
+                        <div style="font-size: 18px; font-weight: 700; color: var(--black);">Achievement!</div>
+                    </div>
+                </div>
+                <div class="component-info">
+                    <h3>Celebration State</h3>
+                    <p>Large emoji + text. Confetti triggers. This is the dopamine hit moment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Design Rules -->
+    <section class="container">
+        <h2>Design Rules</h2>
+        <p class="subtitle">Non-negotiable guidelines that protect the brand and maximize impact.</p>
+
+        <div class="guidelines-split">
+            <div class="guideline-section do">
+                <h3>✓ Always Do This</h3>
+                <ul class="guideline-list">
+                    <li>White backgrounds with emerald accents</li>
+                    <li>Use emojis for icons and visual markers</li>
+                    <li>Make achievements feel like wins (confetti, bold text, big numbers)</li>
+                    <li>Bold, confident typography (800 weight for headlines)</li>
+                    <li>Generous whitespace—let things breathe</li>
+                    <li>High contrast text (black on white)</li>
+                    <li>System fonts for reliability and speed</li>
+                    <li>Social-shareable designs (screenshot-worthy)</li>
+                    <li>Let the green punch through</li>
+                    <li>Celebrate wins visually</li>
+                </ul>
+            </div>
+
+            <div class="guideline-section dont">
+                <h3>✕ Never Do This</h3>
+                <ul class="guideline-list">
+                    <li>Dark backgrounds (we're white-first)</li>
+                    <li>Custom icons (use emojis or simple shapes)</li>
+                    <li>Multiple accent colors</li>
+                    <li>Thin or light typography</li>
+                    <li>Cramped or dense layouts</li>
+                    <li>Gray text on light backgrounds</li>
+                    <li>Anything that doesn't scale cleanly on social</li>
+                    <li>Decorative elements with no function</li>
+                    <li>The green hidden or muted</li>
+                    <li>Cute when you should be premium</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Voice & Tone -->
+    <section class="container">
+        <h2>Voice & Tone</h2>
+        <p class="subtitle">How we talk to users. Bold. Celebratory. Smart. Never corporate.</p>
+
+        <div class="essence-grid">
+            <div class="essence-card">
+                <h3>Celebration-First</h3>
+                <p>"You crushed it!" not "Transaction processed." Every milestone is a win. We celebrate with our users.</p>
+            </div>
+            <div class="essence-card">
+                <h3>Smart & Direct</h3>
+                <p>Short sentences. Action-oriented. No corporate jargon. We talk like engineers and builders, not marketers.</p>
+            </div>
+            <div class="essence-card">
+                <h3>Premium Lab Vibes</h3>
+                <p>Precise. Cutting-edge. Like 1X Technologies. We sound like the innovation lab we are.</p>
+            </div>
+            <div class="essence-card">
+                <h3>Emoji-Native</h3>
+                <p>Emojis aren't decoration—they're language. They communicate instantly and share beautifully on social.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media Note -->
+    <div class="social-note">
+        <h3>📱 Built for Social Sharing</h3>
+        <p>These guidelines are designed to be screenshot-worthy. Bold. Punchy. The green pops. Emojis scale. Users want to share this on Twitter, LinkedIn, Instagram. Make it happen.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><strong>True Margin Labs Brand Guidelines</strong></p>
+        <p>Version 1.0 | January 2026</p>
+        <p style="margin-top: 20px; font-size: 12px;">Dopamine candy wrapped in innovation lab credibility.</p>
+    </div>
+</body>
+</html>

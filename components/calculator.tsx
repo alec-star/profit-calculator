@@ -118,19 +118,18 @@ export function ProfitCalculator() {
 
   // Calculate margin scenarios based on user's selling price
   const marginScenarios = useMemo(() => {
-    const { sellingPrice, feesPercent, feesCents, adSpend } = inputs;
+    const { sellingPrice, feesPercent, feesCents, taxPercent, adSpend } = inputs;
     const processingFees = (sellingPrice * feesPercent / 100) + (feesCents / 100);
+    const taxCost = sellingPrice * (taxPercent / 100);
 
     return TARGET_MARGINS.map((margin) => {
-      // Calculate what COGS would need to be for this margin
+      // Calculate profit at this margin target
       const targetProfit = sellingPrice * margin;
-      const maxCogs = sellingPrice - processingFees - targetProfit;
       const breakevenRoas = targetProfit > 0.01 ? sellingPrice / targetProfit : Infinity;
       const breakevenOrders = targetProfit > 0.01 ? Math.ceil(adSpend / targetProfit) : Infinity;
       return {
         margin,
         price: sellingPrice,
-        maxCogs: Math.round(maxCogs * 100) / 100,
         profit: Math.round(targetProfit * 100) / 100,
         breakevenRoas: isFinite(breakevenRoas) ? Math.round(breakevenRoas * 100) / 100 : Infinity,
         breakevenOrders: isFinite(breakevenOrders) ? breakevenOrders : Infinity,
