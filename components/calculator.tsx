@@ -31,6 +31,7 @@ interface CalcInputs {
   sellingPrice: number;
   cogs: number;
   taxPercent: number;
+  refundPercent: number;
   adSpend: number;
   feesPercent: number;
   feesCents: number;
@@ -100,6 +101,7 @@ export function ProfitCalculator() {
     sellingPrice: 50,
     cogs: 10,
     taxPercent: 0,
+    refundPercent: 0,
     adSpend: 0,
     feesPercent: 2.9,
     feesCents: 30,
@@ -194,7 +196,7 @@ export function ProfitCalculator() {
   }, [inputs]);
 
   const results = useMemo(() => {
-    const { sellingPrice, cogs, taxPercent, adSpend, feesPercent, feesCents, otherCostsPercent, fixedFeesPerUnit, monthlyOverhead } = inputs;
+    const { sellingPrice, cogs, taxPercent, refundPercent, adSpend, feesPercent, feesCents, otherCostsPercent, fixedFeesPerUnit, monthlyOverhead } = inputs;
 
     if (!sellingPrice || sellingPrice <= 0) {
       return { hasSellingPrice: false, breakevenRoas: 0, breakevenUnits: 0, profitPerUnit: 0, hasAdSpend: false };
@@ -203,8 +205,9 @@ export function ProfitCalculator() {
     const grossMargin = sellingPrice - cogs - fixedFeesPerUnit;
     const processingFees = (sellingPrice * (feesPercent / 100)) + (feesCents / 100);
     const taxCost = sellingPrice * (taxPercent / 100);
+    const refundCost = sellingPrice * (refundPercent / 100);
     const otherCosts = sellingPrice * (otherCostsPercent / 100);
-    const profitPerUnit = grossMargin - processingFees - taxCost - otherCosts;
+    const profitPerUnit = grossMargin - processingFees - taxCost - refundCost - otherCosts;
 
     const fixedCosts = adSpend + monthlyOverhead;
     const breakevenUnits = profitPerUnit > 0 && fixedCosts > 0 ? Math.ceil(fixedCosts / profitPerUnit) : 0;
@@ -219,9 +222,8 @@ export function ProfitCalculator() {
         <div className="text-center mb-12 lg:mb-16">
           <Image src="/logo-black.png" alt="TrueMargin Labs" width={106} height={106} className="mx-auto mb-2" />
           <Image src="/typeface-lightblack.png" alt="TrueMargin Labs" width={200} height={24} className="mx-auto mb-4" />
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto px-4 sm:px-0">
-            Calculate your breakeven ROAS & CPA, profit margin, and exactly how many sales you need before spending on ads.
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-wide mb-2">Real Margins. Real Profits. Real Fast.</h1>
+          <h2 className="text-lg text-muted-foreground">From operators, for operators</h2>
         </div>
 
 
@@ -234,7 +236,6 @@ export function ProfitCalculator() {
               <CardContent className="space-y-4">
                 <CalcField label="Selling Price" value={inputs.sellingPrice} onChange={(v) => updateInput("sellingPrice", v)} prefix="$" placeholder="50" />
                 <CalcField label="Cost of Goods Sold" value={inputs.cogs} onChange={(v) => updateInput("cogs", v)} prefix="$" placeholder="10" />
-                <CalcField label="Tax/VAT" value={inputs.taxPercent} onChange={(v) => updateInput("taxPercent", v)} suffix="%" placeholder="0" />
                 <CalcField label="Ad Spend" value={inputs.adSpend} onChange={(v) => updateInput("adSpend", v)} prefix="$" placeholder="50" />
                 <div className="space-y-1.5">
                   <Label className="text-sm font-medium">Processing Fees</Label>
@@ -259,6 +260,10 @@ export function ProfitCalculator() {
                       </div>
                     </div>
                   )}
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <CalcField label="Tax / VAT" value={inputs.taxPercent} onChange={(v) => updateInput("taxPercent", v)} suffix="%" placeholder="0" />
+                  <CalcField label="Refund Rate" value={inputs.refundPercent} onChange={(v) => updateInput("refundPercent", v)} suffix="%" placeholder="0" />
                 </div>
               </CardContent>
             </Card>
