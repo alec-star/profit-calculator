@@ -22,8 +22,8 @@ const MARGIN_COLORS: Record<number, string> = {
 // ROAS health indicator: green < 1.5x, yellow 1.5-2.0x, red > 2.0x
 function getRoasBackground(roas: number): string {
   if (roas <= 0 || !isFinite(roas)) return "bg-gray-50/80 border-gray-100";
-  if (roas < 1.5) return "bg-emerald-50/80 border-emerald-100";
-  if (roas <= 2.0) return "bg-amber-50/80 border-amber-100";
+  if (roas <= 1.7) return "bg-emerald-50/80 border-emerald-100";
+  if (roas <= 2.5) return "bg-amber-50/80 border-amber-100";
   return "bg-red-50/80 border-red-100";
 }
 
@@ -435,10 +435,10 @@ export function ProfitCalculator() {
                               <td className="text-right py-1.5">${inputs.sellingPrice}</td>
                               <td className={`text-right py-1.5 text-[#00d084] font-medium`}>
                               <span className={`px-1.5 py-0.5 rounded ${getRoasBackground(scenario.breakevenRoas)}`}>
-                                {isFinite(scenario.breakevenRoas) ? `${scenario.breakevenRoas.toFixed(2)}x` : "∞"}
+                                {isFinite(scenario.breakevenRoas) ? `${scenario.breakevenRoas.toFixed(2)}x` : "N/A"}
                               </span>
                             </td>
-                              <td className="text-right py-1.5 pr-3">{isFinite(scenario.breakevenOrders) ? scenario.breakevenOrders : "∞"}</td>
+                              <td className="text-right py-1.5 pr-3">{isFinite(scenario.breakevenOrders) ? scenario.breakevenOrders : "N/A"}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -452,9 +452,9 @@ export function ProfitCalculator() {
         </main>
 
       {/* Sticky email signup footer - desktop only */}
-      <div className="footer-hover hidden sm:block fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-4 z-50">
+      <div className="footer-hover hidden sm:block fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-3 z-50">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-          <Image src="/dashboard-coming-soon.png" alt="True Margin APEX" width={250} height={80} className="hidden sm:block" />
+          <Image src="/dashboard-coming-soon.png" alt="True Margin APEX" width={213} height={64} className="hidden sm:block h-16 w-auto" />
           {waitlistStatus === "success" ? (
             <p className="text-[#00d084] font-bold text-lg">{"You're on the list!"}</p>
           ) : (
@@ -502,8 +502,8 @@ export function ProfitCalculator() {
         </div>
       )}
 
-      <footer className="border-t mt-8 py-6 sm:pb-[8.5rem] text-center">
-        <Image src="/footer.png" alt="Free forever. By TrueMargin." width={200} height={28} className="mx-auto" />
+      <footer className="border-t mt-8 pt-6 pb-6 sm:pb-[7rem] text-center">
+        <Image src="/footer.png" alt="Free forever. By TrueMargin." width={200} height={28} className="mx-auto h-7 w-auto" />
       </footer>
     </div>
   );

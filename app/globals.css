@@ -89,3 +89,79 @@ input[type="email"]:focus::placeholder {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Animated card hover - green bar grows from top */
+.card-hover {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card-hover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 0;
+  background: linear-gradient(180deg, #00d084 0%, #00ff9f 100%);
+  transition: height 0.4s ease;
+  z-index: 10;
+}
+
+.card-hover:hover {
+  border-color: #00d084;
+  box-shadow: 0 16px 40px rgba(0, 208, 132, 0.12);
+  transform: translateY(-6px);
+}
+
+.card-hover:hover::before {
+  height: 100%;
+}
+
+/* Sticky footer hover - two bars meet in middle */
+.footer-hover {
+  transition: all 0.3s ease;
+}
+
+.footer-hover::before,
+.footer-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, #00d084 0%, #00ff9f 100%);
+  transition: width 0.4s ease;
+  z-index: 10;
+}
+
+.footer-hover::before {
+  left: 0;
+}
+
+.footer-hover::after {
+  right: 0;
+  background: linear-gradient(270deg, #00d084 0%, #00ff9f 100%);
+}
+
+.footer-hover:hover::before,
+.footer-hover:hover::after {
+  width: 50%;
+}
+
+.footer-hover:hover {
+  box-shadow: 0 -8px 30px rgba(0, 208, 132, 0.25);
+}
+
+/* Success footer fade out */
+.success-footer {
+  animation: fadeInOut 3s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
