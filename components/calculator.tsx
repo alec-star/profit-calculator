@@ -222,7 +222,7 @@ export function ProfitCalculator() {
         <div className="text-center mb-12 lg:mb-16">
           <Image src="/logo-black.png" alt="TrueMargin Labs" width={106} height={106} className="mx-auto mb-2" />
           <Image src="/typeface-lightblack.png" alt="TrueMargin Labs" width={200} height={24} className="mx-auto mb-4" />
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-wide mb-2">Real Margins. Real Profits. Real Fast.</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-wide mb-2 whitespace-nowrap">Real Margins. Real Profits. Real Fast.</h1>
           <h2 className="text-lg text-muted-foreground">From operators, for operators</h2>
         </div>
 
