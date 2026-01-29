@@ -218,11 +218,11 @@ export function ProfitCalculator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <main className="mx-auto max-w-6xl px-4 pt-12 pb-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 lg:mb-16">
+      <main className="mx-auto max-w-6xl px-4 pt-8 pb-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-10 lg:mb-[52px]">
           <Image src="/logo-black.png" alt="TrueMargin Labs" width={106} height={106} className="mx-auto mb-2" />
           <Image src="/typeface-lightblack.png" alt="TrueMargin Labs" width={200} height={24} className="mx-auto mb-4" />
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-wide mb-2 whitespace-nowrap">Real Margins. Real Profits. Real Fast.</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-wide mb-2 sm:whitespace-nowrap">Real Margins. Real Profits.<br className="sm:hidden" /> Real Fast.</h1>
           <h2 className="text-lg text-muted-foreground">From operators, for operators</h2>
         </div>
 
