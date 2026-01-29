@@ -22,7 +22,7 @@ const MARGIN_COLORS: Record<number, string> = {
 // ROAS health indicator: green < 1.5x, yellow 1.5-2.0x, red > 2.0x
 function getRoasBackground(roas: number): string {
   if (roas <= 0 || !isFinite(roas)) return "bg-gray-50/80 border-gray-100";
-  if (roas <= 1.7) return "bg-emerald-50/80 border-emerald-100";
+  if (roas <= 1.8) return "bg-emerald-50/80 border-emerald-100";
   if (roas <= 2.5) return "bg-amber-50/80 border-amber-100";
   return "bg-red-50/80 border-red-100";
 }
@@ -176,21 +176,38 @@ export function ProfitCalculator() {
     }
   }, []);
 
-  // Calculate margin scenarios based on user's selling price
+  // Calculate margin scenarios using real costs
   const marginScenarios = useMemo(() => {
-    const { sellingPrice, adSpend } = inputs;
+    const { sellingPrice, cogs, taxPercent, refundPercent, adSpend, feesPercent, feesCents, otherCostsPercent, fixedFeesPerUnit } = inputs;
+
+    if (!sellingPrice || sellingPrice <= 0) {
+      return TARGET_MARGINS.map((margin) => ({
+        margin,
+        availableForAds: 0,
+        targetRoas: Infinity,
+        ordersNeeded: Infinity,
+      }));
+    }
+
+    const totalCosts = cogs + fixedFeesPerUnit
+      + (sellingPrice * (feesPercent / 100)) + (feesCents / 100)
+      + (sellingPrice * (taxPercent / 100))
+      + (sellingPrice * (refundPercent / 100))
+      + (sellingPrice * (otherCostsPercent / 100));
+
+    const profitPerUnit = sellingPrice - totalCosts;
 
     return TARGET_MARGINS.map((margin) => {
-      // Calculate profit at this margin target
-      const targetProfit = sellingPrice * margin;
-      const breakevenRoas = targetProfit > 0.01 ? sellingPrice / targetProfit : Infinity;
-      const breakevenOrders = targetProfit > 0.01 ? Math.ceil(adSpend / targetProfit) : Infinity;
+      // How much of profit can go to ads while keeping desired margin
+      const availableForAds = profitPerUnit - (sellingPrice * margin);
+      const targetRoas = availableForAds > 0.01 ? sellingPrice / availableForAds : Infinity;
+      const ordersNeeded = availableForAds > 0.01 && adSpend > 0 ? Math.ceil(adSpend / availableForAds) : Infinity;
+
       return {
         margin,
-        price: sellingPrice,
-        profit: Math.round(targetProfit * 100) / 100,
-        breakevenRoas: isFinite(breakevenRoas) ? Math.round(breakevenRoas * 100) / 100 : Infinity,
-        breakevenOrders: isFinite(breakevenOrders) ? breakevenOrders : Infinity,
+        availableForAds: Math.round(availableForAds * 100) / 100,
+        targetRoas: isFinite(targetRoas) ? Math.round(targetRoas * 100) / 100 : Infinity,
+        ordersNeeded: isFinite(ordersNeeded) ? ordersNeeded : Infinity,
       };
     });
   }, [inputs]);
@@ -419,7 +436,7 @@ export function ProfitCalculator() {
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Net Margin Scenarios</CardTitle>
+                    <CardTitle className="text-sm">See How Margin Changes Your ROAS Target</CardTitle>
                     <p className="text-xs text-muted-foreground">At your ${inputs.sellingPrice} selling price</p>
                   </CardHeader>
                   <CardContent>
@@ -428,8 +445,8 @@ export function ProfitCalculator() {
                         <thead>
                           <tr className="border-b">
                             <th className="text-left py-1.5 pl-3 font-medium text-muted-foreground">Margin</th>
-                            <th className="text-right py-1.5 font-medium text-muted-foreground">Price</th>
-                            <th className="text-right py-1.5 font-medium text-muted-foreground">BE ROAS</th>
+                            <th className="text-right py-1.5 font-medium text-muted-foreground">$/Unit</th>
+                            <th className="text-right py-1.5 font-medium text-muted-foreground">Target ROAS</th>
                             <th className="text-right py-1.5 pr-3 font-medium text-muted-foreground">Orders</th>
                           </tr>
                         </thead>
@@ -437,13 +454,13 @@ export function ProfitCalculator() {
                           {marginScenarios.map((scenario) => (
                             <tr key={scenario.margin} className={`border-b border-muted/50 ${MARGIN_COLORS[scenario.margin] || ""}`}>
                               <td className="py-1.5 pl-3 font-medium">{scenario.margin === 0 ? "BE" : `${(scenario.margin * 100).toFixed(0)}%`}</td>
-                              <td className="text-right py-1.5">${inputs.sellingPrice}</td>
-                              <td className={`text-right py-1.5 text-[#00d084] font-medium`}>
-                              <span className={`px-1.5 py-0.5 rounded ${getRoasBackground(scenario.breakevenRoas)}`}>
-                                {isFinite(scenario.breakevenRoas) ? `${scenario.breakevenRoas.toFixed(2)}x` : "N/A"}
+                              <td className="text-right py-1.5">{scenario.availableForAds > 0 ? `$${scenario.availableForAds.toFixed(2)}` : "N/A"}</td>
+                              <td className={`text-right py-1.5 font-medium`}>
+                              <span className={`px-1.5 py-0.5 rounded ${getRoasBackground(scenario.targetRoas)}`}>
+                                {isFinite(scenario.targetRoas) ? `${scenario.targetRoas.toFixed(2)}x` : "N/A"}
                               </span>
                             </td>
-                              <td className="text-right py-1.5 pr-3">{isFinite(scenario.breakevenOrders) ? scenario.breakevenOrders : "N/A"}</td>
+                              <td className="text-right py-1.5 pr-3">{isFinite(scenario.ordersNeeded) ? scenario.ordersNeeded : "N/A"}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -458,13 +475,13 @@ export function ProfitCalculator() {
 
       {/* Sticky email signup footer - desktop only */}
       <div className="footer-hover hidden sm:block fixed bottom-0 left-0 right-0 bg-white border-t border-[#00d084]/30 shadow-[0_-4px_20px_rgba(0,208,132,0.15)] px-8 py-3 z-50">
-        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+        <div className="max-w-3xl mx-auto flex flex-row items-center justify-center gap-4">
           <Image src="/dashboard-coming-soon.png" alt="True Margin APEX" width={213} height={64} className="hidden sm:block h-16 w-auto" />
           {waitlistStatus === "success" ? (
             <p className="text-[#00d084] font-bold text-lg">{"You're on the list!"}</p>
           ) : (
             <>
-              <div className="relative w-full sm:flex-1 sm:min-w-[200px]">
+              <div className="relative flex-1 min-w-[200px]">
                 <input
                   type="email"
                   name="email"
