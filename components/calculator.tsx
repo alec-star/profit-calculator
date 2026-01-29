@@ -288,7 +288,7 @@ export function ProfitCalculator() {
             {/* APEX card - desktop only (in sidebar) */}
             <Card className="card-hover border-[#00d084]/30 flex-1 hidden lg:block">
               <CardContent className="p-6 text-center flex flex-col justify-center h-full">
-                <Image src="/dashboard-coming-soon.png" alt="True Margin APEX - Arriving March 2026" width={300} height={61} className="mx-auto mb-6" />
+                <Image src="/dashboard-coming-soon.png" alt="True Margin APEX - Arriving March 2026" width={420} height={85} className="w-full h-auto mb-6" />
                 {waitlistStatus === "success" ? (
                   <p className="text-[#00d084] font-bold py-2">{"You're on the list!"}</p>
                 ) : (
@@ -392,8 +392,8 @@ export function ProfitCalculator() {
 
                 {/* Mobile email signup */}
                 <Card className="lg:hidden border-[#00d084]/30">
-                  <CardContent className="p-4 text-center">
-                    <Image src="/dashboard-coming-soon.png" alt="True Margin APEX" width={200} height={48} className="mx-auto mb-3" />
+                  <CardContent className="p-5 sm:p-6 text-center">
+                    <Image src="/dashboard-coming-soon.png" alt="True Margin APEX" width={400} height={81} className="w-full h-auto mb-4" />
                     {waitlistStatus === "success" ? (
                       <p className="text-[#00d084] font-bold py-2">{"You're on the list!"}</p>
                     ) : (
