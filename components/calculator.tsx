@@ -524,6 +524,68 @@ export function ProfitCalculator() {
         </div>
       )}
 
+      {/* SEO Content */}
+      <section className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8 space-y-12 text-base leading-[1.8] text-[#0a0a0a]">
+        <div>
+          <h2 className="text-2xl font-extrabold text-[#0a0a0a] mb-4">What is Breakeven ROAS?</h2>
+          <p>
+            Breakeven ROAS (Return on Ad Spend) is the minimum ROAS your paid ads need to hit so you
+            {"don't"} lose money on each sale. If your breakeven ROAS is 2.0x, every $1 you spend on ads
+            needs to generate at least $2 in revenue just to cover all your costs — product, shipping,
+            processing fees, taxes, and refunds. Anything above that number is profit.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-extrabold text-[#0a0a0a] mb-4">The Formula</h2>
+          <div className="rounded-lg p-6 font-mono text-center text-base border border-[#e5e7eb] bg-white">
+            Breakeven ROAS = Selling Price / (Selling Price - Total Costs Per Unit)
+          </div>
+          <p className="mt-4">
+            Total costs include cost of goods sold, processing fees, shipping, taxes, refund losses,
+            and any other per-unit expenses. The calculator above handles all of this automatically.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-extrabold text-[#0a0a0a] mb-4">Why Ad Platforms {"Don't"} Show Your Real ROAS</h2>
+          <p>
+            Facebook, TikTok, and Google report ROAS based on revenue alone. They {"don't"} know your
+            product costs, Shopify processing fees, shipping expenses, or refund rate. A 3.0x ROAS in
+            Meta Ads Manager might actually be a 1.2x true ROAS once you factor in real costs — meaning
+            {"you're"} barely breaking even while thinking {"you're"} profitable.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-extrabold text-[#0a0a0a] mb-4">Example Calculation</h2>
+          <p>
+            Say you sell a product for <strong>$50</strong> with <strong>$10 COGS</strong>,{" "}
+            <strong>$1.75 processing fees</strong> (2.9% + 30¢), and a <strong>3% refund rate</strong> ($1.50).
+            Your total costs per unit are $13.25, leaving $36.75 in margin before ad spend.
+          </p>
+          <div className="rounded-lg p-6 font-mono text-center text-base mt-4 border border-[#e5e7eb] bg-white">
+            $50 / $36.75 = <strong style={{ color: "#00d084" }}>1.36x Breakeven ROAS</strong>
+          </div>
+          <p className="mt-4">
+            That means any Meta or TikTok campaign running above 1.36x ROAS is profitable. Below that,
+            {"you're"} losing money on every sale. Use the margin scenarios table above to see how your
+            target ROAS changes at different profit margin levels.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-extrabold text-[#0a0a0a] mb-4">How to Use This Calculator</h2>
+          <ol className="list-decimal list-inside space-y-3">
+            <li>Enter your <strong>selling price</strong> and <strong>cost of goods sold</strong></li>
+            <li>Select your <strong>Shopify plan</strong> for accurate processing fees</li>
+            <li>Add your <strong>tax rate</strong> and <strong>refund rate</strong> if applicable</li>
+            <li>Enter your <strong>monthly ad spend</strong> to see how many units you need to sell</li>
+            <li>Use the <strong>margin scenarios table</strong> to find the ROAS target for your desired profit margin</li>
+          </ol>
+        </div>
+      </section>
+
       <footer className="border-t mt-8 pt-6 pb-6 sm:pb-[7rem] text-center">
         <Image src="/footer.png" alt="Free forever. By TrueMargin." width={200} height={28} className="mx-auto h-7 w-auto" />
       </footer>
